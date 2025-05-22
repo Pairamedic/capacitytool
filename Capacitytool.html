@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EMS Capacity Tool – Full Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { color: #005a9c; }
+        h2 { color: #0073e6; }
+        .section { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .checkbox-group { margin-bottom: 10px; }
+        .checkbox-group label { display: block; margin-bottom: 5px; }
+        .popup-box { background: #e7f3fe; border: 1px solid #0073e6; padding: 15px; border-radius: 5px; margin-top: 10px; }
+        .score-box { font-size: 18px; font-weight: bold; margin-top: 15px; }
+        .low { color: green; }
+        .moderate { color: orange; }
+        .high { color: red; }
+        .question { margin-bottom: 15px; }
+        textarea, input[type="text"], input[type="time"], input[type="date"] { width: 100%; font-size: 14px; padding: 5px; margin-top: 5px; margin-bottom: 10px; }
+    </style>
+    <script>
+        function calculateRealCSSRSScore() {
+            const q1 = document.getElementById("q1").checked;
+            const q2 = document.getElementById("q2").checked;
+            const q3 = document.getElementById("q3").checked;
+            const q4 = document.getElementById("q4").checked;
+            const q5 = document.getElementById("q5").checked;
+            const q6 = document.getElementById("q6").checked;
+
+            let riskText = "Low Risk – Monitor";
+            let riskClass = "low";
+
+            if (q4 || q5 || q6) {
+                riskText = "High Risk – Immediate Intervention Required";
+                riskClass = "high";
+            } else if (q2 || q3) {
+                riskText = "Moderate Risk – Requires Mental Health Evaluation";
+                riskClass = "moderate";
+            } else if (q1) {
+                riskText = "Low Risk – Monitor and Reassess";
+                riskClass = "low";
+            }
+
+            const output = document.getElementById("riskScore");
+            output.textContent = riskText;
+            output.className = "score-box " + riskClass;
+        }
+    </script>
+</head>
+<body>
+    <h1>EMS Capacity Tool</h1>
+
+    <div class="section">
+        <h2>Incident Info</h2>
+        <label><strong>Date:</strong></label>
+        <input type="date">
+        <label><strong>Time:</strong></label>
+        <input type="time">
+        <label><strong>EMS Unit / Crew ID:</strong></label>
+        <input type="text" placeholder="E.g., Unit 214 / Medic Caldwell">
+        <label><strong>Run #: </strong></label>
+        <input type="text" placeholder="Enter run number or call reference">
+    </div>
+
+    <div class="section">
+        <h2>1. Capacity Checklist (Pafford Protocol)</h2>
+        <div class="checkbox-group">
+            <label><input type="checkbox"> Patient is alert and oriented</label>
+            <label><input type="checkbox"> Patient understands circumstances of illness/injury</label>
+            <label><input type="checkbox"> Patient understands risks of refusing treatment/transport</label>
+            <label><input type="checkbox"> No impairment from illness, injury, drugs, or alcohol</label>
+            <label><input type="checkbox"> No baseline mental illness impairing decision-making</label>
+        </div>
+        <label><strong>Mitigating Factors (e.g., Alcohol, Drugs, Confusion):</strong></label>
+        <textarea placeholder="Describe any observed impairments, intoxication, or other relevant context."></textarea>
+        <label><strong>Patient Quotes or Comments:</strong></label>
+        <textarea placeholder="E.g., 'I don’t care if I die.' or 'I just want to sleep forever.'"></textarea>
+    </div>
+
+    <div class="section">
+        <h2>2. Suicidal Ideation Protocol</h2>
+        <div class="checkbox-group">
+            <label><input type="checkbox"> Patient has attempted or verbalized suicidal ideation</label>
+            <label><input type="checkbox"> If YES to above, patient may lack capacity and MUST be transported</label>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. MedLink Process</h2>
+        <ol>
+            <li>Determine capacity using above checklist</li>
+            <li>If refusing care/transport but stable: initiate MedLink consult via Pulsara</li>
+            <li>Document capacity discussion and MedLink recommendation</li>
+            <li>Ensure witnessed refusal call is made</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>4. C-SSRS Suicide Screening (With Timing)</h2>
+        <div class="popup-box cssrs-question">
+            <strong>C-SSRS Questions:</strong>
+            <div class="question">
+                <label><input type="checkbox" id="q1" onchange="calculateRealCSSRSScore()"> Have you wished you were dead or wished you could go to sleep and not wake up?</label>
+                <input type="text" placeholder="When did this occur? (e.g. today, yesterday, 3 days ago)">
+            </div>
+            <div class="question">
+                <label><input type="checkbox" id="q2" onchange="calculateRealCSSRSScore()"> Have you actually had any thoughts of killing yourself?</label>
+                <input type="text" placeholder="When did this occur?">
+            </div>
+            <div class="question">
+                <label><input type="checkbox" id="q3" onchange="calculateRealCSSRSScore()"> Have you been thinking about how you might do this?</label>
+                <input type="text" placeholder="When did this occur?">
+            </div>
+            <div class="question">
+                <label><input type="checkbox" id="q4" onchange="calculateRealCSSRSScore()"> Have you had these thoughts and had some intention of acting on them?</label>
+                <input type="text" placeholder="When did this occur?">
+            </div>
+            <div class="question">
+                <label><input type="checkbox" id="q5" onchange="calculateRealCSSRSScore()"> Have you worked out the details of how to kill yourself?</label>
+                <input type="text" placeholder="When did this occur?">
+            </div>
+            <div class="question">
+                <label><input type="checkbox" id="q6" onchange="calculateRealCSSRSScore()"> Have you ever done anything, started to do anything, or prepared to do anything to end your life?</label>
+                <input type="text" placeholder="When did this occur?">
+            </div>
+        </div>
+        <div class="score-box low" id="riskScore">Low Risk – Monitor</div>
+    </div>
+
+    <p><em>Use this form as a reference when documenting mental capacity or suicide risk in your patient narrative.</em></p>
+</body>
+</html>
