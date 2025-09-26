@@ -3,30 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <title>EMS Protocol Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
-    h1 { text-align: center; }
-    .service, .protocol { margin: 10px 0; padding: 10px; border-radius: 8px; }
-    .service { background: #e9ecef; }
-    .protocol { background: #fff; border: 1px solid #ddd; }
-    button { margin-left: 5px; }
-    input[type=text] { padding: 5px; margin: 5px 0; width: 200px; }
-    .protocol a { text-decoration: none; color: #007bff; }
+    /* ===== Base Dark Theme ===== */
+    body {
+      font-family: "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      background: #121212;
+      color: #e0e0e0;
+      line-height: 1.5;
+    }
+
+    h1, h2 {
+      margin: 0 0 10px;
+      font-weight: 600;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+      font-size: 1.8rem;
+      color: #00bcd4;
+    }
+
+    /* ===== Containers ===== */
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .service {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    .protocol {
+      background: #2a2a2a;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .protocol strong {
+      color: #fff;
+    }
+
+    a {
+      color: #00bcd4;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== Buttons & Inputs ===== */
+    button, input[type=text] {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    button {
+      background: #00bcd4;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0097a7;
+    }
+    button.danger {
+      background: #e53935;
+    }
+    button.danger:hover {
+      background: #b71c1c;
+    }
+
+    input[type=text] {
+      width: 100%;
+      max-width: 280px;
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .protocol {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      button {
+        width: 100%;
+        margin-top: 5px;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>🚑 EMS Protocol Manager</h1>
 
-  <div>
-    <input type="text" id="serviceName" placeholder="New Ambulance Service">
-    <button onclick="addService()">Add Service</button>
-  </div>
+  <div class="container">
+    <div>
+      <input type="text" id="serviceName" placeholder="New Ambulance Service">
+      <button onclick="addService()">Add Service</button>
+    </div>
 
-  <div>
-    <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
-  </div>
+    <div>
+      <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
+    </div>
 
-  <div id="servicesContainer"></div>
+    <div id="servicesContainer"></div>
+  </div>
 
   <script>
     let services = JSON.parse(localStorage.getItem("services")) || [];
@@ -105,6 +202,7 @@
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "🗑 Remove Service";
+        removeBtn.classList.add("danger");
         removeBtn.onclick = () => removeService(sIndex);
         serviceDiv.appendChild(removeBtn);
 
@@ -114,9 +212,11 @@
             const protoDiv = document.createElement("div");
             protoDiv.className = "protocol";
             protoDiv.innerHTML = `
-              <strong>${protocol.name}</strong><br>
-              <a href="${protocol.fileData}" target="_blank">${protocol.fileName}</a>
-              <button onclick="removeProtocol(${sIndex}, ${pIndex})">🗑</button>
+              <div>
+                <strong>${protocol.name}</strong><br>
+                <a href="${protocol.fileData}" target="_blank">${protocol.fileName}</a>
+              </div>
+              <button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>
             `;
             serviceDiv.appendChild(protoDiv);
           });
