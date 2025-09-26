@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    /* ===== Base Dark Theme ===== */
+    /* ===== Dark Theme ===== */
     body {
       font-family: "Segoe UI", Roboto, sans-serif;
       margin: 0;
@@ -14,26 +14,25 @@
       color: #e0e0e0;
       line-height: 1.5;
     }
-
-    h1, h2 {
-      margin: 0 0 10px;
-      font-weight: 600;
-    }
-
     h1 {
       text-align: center;
       padding: 20px;
       font-size: 1.8rem;
       color: #00bcd4;
+      margin: 0;
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 1.3rem;
     }
 
-    /* ===== Containers ===== */
     .container {
       max-width: 900px;
       margin: auto;
       padding: 15px;
     }
 
+    /* ===== Service Cards ===== */
     .service {
       background: #1e1e1e;
       padding: 15px;
@@ -41,7 +40,18 @@
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
+    .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .service-header h2 {
+      margin: 0;
+      color: #fff;
+    }
 
+    /* ===== Protocol Cards ===== */
     .protocol {
       background: #2a2a2a;
       margin: 10px 0;
@@ -50,62 +60,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
-
-    .protocol strong {
-      color: #fff;
+    .protocol strong { color: #fff; }
+    .protocol span {
+      font-size: 0.8rem;
+      color: #bbb;
+      display: block;
     }
-
-    a {
+    .protocol a {
       color: #00bcd4;
       text-decoration: none;
     }
-    a:hover {
+    .protocol a:hover {
       text-decoration: underline;
     }
 
     /* ===== Buttons & Inputs ===== */
-    button, input[type=text] {
+    button, input[type=text], select {
       padding: 8px 12px;
       margin: 5px 0;
       border: none;
       border-radius: 6px;
       font-size: 0.9rem;
     }
-
     button {
       background: #00bcd4;
       color: #fff;
       cursor: pointer;
       transition: background 0.2s;
     }
-    button:hover {
-      background: #0097a7;
-    }
-    button.danger {
-      background: #e53935;
-    }
-    button.danger:hover {
-      background: #b71c1c;
-    }
-
-    input[type=text] {
+    button:hover { background: #0097a7; }
+    button.danger { background: #e53935; }
+    button.danger:hover { background: #b71c1c; }
+    button.secondary { background: #444; }
+    input[type=text], select {
       width: 100%;
       max-width: 280px;
       background: #2a2a2a;
       color: #fff;
     }
 
+    /* ===== Collapsible Content ===== */
+    .protocols { display: none; margin-top: 10px; }
+    .protocols.open { display: block; }
+
+    /* ===== Modal Viewer ===== */
+    #viewerModal {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #viewerModal iframe {
+      width: 90%; height: 90%;
+      border: none; background: #fff;
+      border-radius: 8px;
+    }
+    #viewerModal button {
+      position: absolute;
+      top: 10px; right: 10px;
+    }
+
     /* ===== Responsive ===== */
     @media (max-width: 768px) {
-      .protocol {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      button {
-        width: 100%;
-        margin-top: 5px;
-      }
+      .protocol { flex-direction: column; align-items: flex-start; }
+      button { width: 100%; margin-top: 5px; }
     }
   </style>
 </head>
@@ -113,23 +136,37 @@
   <h1>🚑 EMS Protocol Manager</h1>
 
   <div class="container">
+    <!-- Add Service -->
     <div>
       <input type="text" id="serviceName" placeholder="New Ambulance Service">
       <button onclick="addService()">Add Service</button>
     </div>
 
+    <!-- Search -->
     <div>
       <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
     </div>
 
+    <!-- Favorites Section -->
+    <div id="favoritesContainer"></div>
+
+    <!-- Services -->
     <div id="servicesContainer"></div>
+  </div>
+
+  <!-- Modal Viewer -->
+  <div id="viewerModal" style="display:flex; align-items:center; justify-content:center;">
+    <button class="danger" onclick="closeViewer()">Close ✖</button>
+    <iframe id="viewerFrame"></iframe>
   </div>
 
   <script>
     let services = JSON.parse(localStorage.getItem("services")) || [];
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
     function save() {
       localStorage.setItem("services", JSON.stringify(services));
+      localStorage.setItem("favorites", JSON.stringify(favorites));
     }
 
     function addService() {
@@ -149,12 +186,19 @@
       }
     }
 
+    function toggleProtocols(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("open");
+    }
+
     function addProtocol(serviceIndex) {
       const name = prompt("Protocol name:");
       if (!name) return;
+      const category = prompt("Category (e.g., Cardiac, Trauma, Airway):") || "Uncategorized";
+
       const fileInput = document.createElement("input");
       fileInput.type = "file";
-      fileInput.accept = ".pdf,.txt,.docx";
+      fileInput.accept = ".pdf,.jpg,.jpeg,.png,.gif";
       fileInput.onchange = e => {
         const file = e.target.files[0];
         if (file) {
@@ -162,6 +206,7 @@
           reader.onload = () => {
             services[serviceIndex].protocols.push({
               name,
+              category,
               fileName: file.name,
               fileData: reader.result
             });
@@ -182,45 +227,101 @@
       }
     }
 
+    function toggleFavorite(protocol) {
+      const exists = favorites.find(f => f.fileData === protocol.fileData);
+      if (exists) {
+        favorites = favorites.filter(f => f.fileData !== protocol.fileData);
+      } else {
+        favorites.push(protocol);
+      }
+      save();
+      renderServices();
+    }
+
+    function isFavorite(protocol) {
+      return favorites.some(f => f.fileData === protocol.fileData);
+    }
+
+    function openViewer(dataUrl) {
+      document.getElementById("viewerFrame").src = dataUrl;
+      document.getElementById("viewerModal").style.display = "flex";
+    }
+    function closeViewer() {
+      document.getElementById("viewerModal").style.display = "none";
+      document.getElementById("viewerFrame").src = "";
+    }
+
     function renderServices() {
       const container = document.getElementById("servicesContainer");
+      const favContainer = document.getElementById("favoritesContainer");
       container.innerHTML = "";
+      favContainer.innerHTML = "";
       const search = document.getElementById("searchBox").value.toLowerCase();
 
-      services.forEach((service, sIndex) => {
-        const serviceDiv = document.createElement("div");
-        serviceDiv.className = "service";
-
-        const header = document.createElement("h2");
-        header.textContent = service.name;
-        serviceDiv.appendChild(header);
-
-        const addBtn = document.createElement("button");
-        addBtn.textContent = "➕ Add Protocol";
-        addBtn.onclick = () => addProtocol(sIndex);
-        serviceDiv.appendChild(addBtn);
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "🗑 Remove Service";
-        removeBtn.classList.add("danger");
-        removeBtn.onclick = () => removeService(sIndex);
-        serviceDiv.appendChild(removeBtn);
-
-        service.protocols
+      // Favorites
+      if (favorites.length > 0) {
+        const favDiv = document.createElement("div");
+        favDiv.className = "service";
+        favDiv.innerHTML = "<h2>⭐ Favorites</h2>";
+        favorites
           .filter(p => p.name.toLowerCase().includes(search))
           .forEach((protocol, pIndex) => {
             const protoDiv = document.createElement("div");
             protoDiv.className = "protocol";
             protoDiv.innerHTML = `
               <div>
-                <strong>${protocol.name}</strong><br>
-                <a href="${protocol.fileData}" target="_blank">${protocol.fileName}</a>
+                <strong>${protocol.name}</strong>
+                <span>${protocol.category}</span>
+                <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
               </div>
-              <button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>
+              <button class="secondary" onclick='toggleFavorite(${JSON.stringify(protocol)})'>Unpin</button>
             `;
-            serviceDiv.appendChild(protoDiv);
+            favDiv.appendChild(protoDiv);
+          });
+        favContainer.appendChild(favDiv);
+      }
+
+      // Services
+      services.forEach((service, sIndex) => {
+        const serviceDiv = document.createElement("div");
+        serviceDiv.className = "service";
+
+        const header = document.createElement("div");
+        header.className = "service-header";
+        header.innerHTML = `<h2>${service.name}</h2>
+          <div>
+            <button onclick="addProtocol(${sIndex})">➕ Protocol</button>
+            <button class="danger" onclick="removeService(${sIndex})">🗑 Remove</button>
+            <button class="secondary" onclick="toggleProtocols('protocols-${sIndex}')">Toggle</button>
+          </div>`;
+        serviceDiv.appendChild(header);
+
+        const protos = document.createElement("div");
+        protos.className = "protocols";
+        protos.id = `protocols-${sIndex}`;
+
+        service.protocols
+          .filter(p => p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search))
+          .forEach((protocol, pIndex) => {
+            const protoDiv = document.createElement("div");
+            protoDiv.className = "protocol";
+            protoDiv.innerHTML = `
+              <div>
+                <strong>${protocol.name}</strong>
+                <span>${protocol.category}</span>
+                <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
+              </div>
+              <div>
+                <button class="secondary" onclick='toggleFavorite(${sIndex}, ${pIndex})'>
+                  ${isFavorite(protocol) ? "⭐ Unpin" : "⭐ Pin"}
+                </button>
+                <button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>
+              </div>
+            `;
+            protos.appendChild(protoDiv);
           });
 
+        serviceDiv.appendChild(protos);
         container.appendChild(serviceDiv);
       });
     }
