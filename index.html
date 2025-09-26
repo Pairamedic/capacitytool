@@ -16,20 +16,33 @@
     }
     h1 {
       text-align: center;
-      padding: 20px;
-      font-size: 1.8rem;
+      padding: 15px;
+      font-size: 1.6rem;
       color: #00bcd4;
       margin: 0;
-    }
-    h2 {
-      margin: 10px 0;
-      font-size: 1.3rem;
+      border-bottom: 1px solid #333;
     }
 
     .container {
       max-width: 900px;
       margin: auto;
       padding: 15px;
+    }
+
+    /* ===== Sticky Top Bar ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: #1e1e1e;
+      padding: 10px;
+      z-index: 100;
+      border-bottom: 1px solid #333;
+    }
+    .topbar input {
+      width: 65%;
+    }
+    .topbar button {
+      float: right;
     }
 
     /* ===== Service Cards ===== */
@@ -44,17 +57,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
+      margin-bottom: 8px;
     }
     .service-header h2 {
       margin: 0;
       color: #fff;
+      font-size: 1.2rem;
     }
 
     /* ===== Protocol Cards ===== */
     .protocol {
       background: #2a2a2a;
-      margin: 10px 0;
+      margin: 8px 0;
       padding: 10px;
       border-radius: 8px;
       display: flex;
@@ -62,22 +76,39 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    .protocol strong { color: #fff; }
+    .protocol-left {
+      flex: 1;
+      min-width: 200px;
+    }
+    .protocol strong { color: #fff; display:block; }
     .protocol span {
       font-size: 0.8rem;
       color: #bbb;
-      display: block;
     }
     .protocol a {
       color: #00bcd4;
       text-decoration: none;
+      display: inline-block;
+      margin-top: 4px;
     }
-    .protocol a:hover {
-      text-decoration: underline;
+    .protocol a:hover { text-decoration: underline; }
+
+    /* ===== Category Labels ===== */
+    .category {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      margin-top: 4px;
     }
+    .cat-trauma { background: #b71c1c; color: #fff; }
+    .cat-cardiac { background: #1565c0; color: #fff; }
+    .cat-airway { background: #2e7d32; color: #fff; }
+    .cat-neuro { background: #6a1b9a; color: #fff; }
+    .cat-other { background: #555; color: #fff; }
 
     /* ===== Buttons & Inputs ===== */
-    button, input[type=text], select {
+    button, input[type=text] {
       padding: 8px 12px;
       margin: 5px 0;
       border: none;
@@ -94,9 +125,7 @@
     button.danger { background: #e53935; }
     button.danger:hover { background: #b71c1c; }
     button.secondary { background: #444; }
-    input[type=text], select {
-      width: 100%;
-      max-width: 280px;
+    input[type=text] {
       background: #2a2a2a;
       color: #fff;
     }
@@ -114,37 +143,41 @@
       z-index: 9999;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
     }
     #viewerModal iframe {
-      width: 90%; height: 90%;
+      width: 95%; height: 90%;
       border: none; background: #fff;
       border-radius: 8px;
     }
     #viewerModal button {
-      position: absolute;
-      top: 10px; right: 10px;
+      margin-bottom: 10px;
     }
 
     /* ===== Responsive ===== */
     @media (max-width: 768px) {
+      .topbar input { width: 100%; margin-bottom: 8px; }
+      .topbar button { float: none; width: 100%; }
       .protocol { flex-direction: column; align-items: flex-start; }
-      button { width: 100%; margin-top: 5px; }
+      .protocol-right { width: 100%; margin-top: 5px; display: flex; gap: 5px; }
+      .protocol-right button { flex: 1; }
     }
   </style>
 </head>
 <body>
   <h1>🚑 EMS Protocol Manager</h1>
 
+  <!-- Sticky Topbar -->
+  <div class="topbar container">
+    <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
+    <button class="secondary" onclick="toggleReadOnly()">Toggle Read-Only</button>
+  </div>
+
   <div class="container">
     <!-- Add Service -->
     <div>
       <input type="text" id="serviceName" placeholder="New Ambulance Service">
       <button onclick="addService()">Add Service</button>
-    </div>
-
-    <!-- Search -->
-    <div>
-      <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
     </div>
 
     <!-- Favorites Section -->
@@ -155,7 +188,7 @@
   </div>
 
   <!-- Modal Viewer -->
-  <div id="viewerModal" style="display:flex; align-items:center; justify-content:center;">
+  <div id="viewerModal">
     <button class="danger" onclick="closeViewer()">Close ✖</button>
     <iframe id="viewerFrame"></iframe>
   </div>
@@ -163,6 +196,7 @@
   <script>
     let services = JSON.parse(localStorage.getItem("services")) || [];
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    let readOnly = false;
 
     function save() {
       localStorage.setItem("services", JSON.stringify(services));
@@ -179,7 +213,7 @@
     }
 
     function removeService(index) {
-      if (confirm("Remove this service?")) {
+      if (!readOnly && confirm("Remove this service?")) {
         services.splice(index, 1);
         save();
         renderServices();
@@ -192,9 +226,13 @@
     }
 
     function addProtocol(serviceIndex) {
+      if (readOnly) return;
       const name = prompt("Protocol name:");
       if (!name) return;
-      const category = prompt("Category (e.g., Cardiac, Trauma, Airway):") || "Uncategorized";
+
+      const categories = ["Trauma","Cardiac","Airway","Neuro","Other"];
+      let category = prompt("Category (Trauma, Cardiac, Airway, Neuro, Other):") || "Other";
+      if (!categories.includes(category)) category = "Other";
 
       const fileInput = document.createElement("input");
       fileInput.type = "file";
@@ -220,7 +258,7 @@
     }
 
     function removeProtocol(serviceIndex, protocolIndex) {
-      if (confirm("Remove this protocol?")) {
+      if (!readOnly && confirm("Remove this protocol?")) {
         services[serviceIndex].protocols.splice(protocolIndex, 1);
         save();
         renderServices();
@@ -251,6 +289,21 @@
       document.getElementById("viewerFrame").src = "";
     }
 
+    function toggleReadOnly() {
+      readOnly = !readOnly;
+      renderServices();
+    }
+
+    function categoryClass(cat) {
+      switch (cat.toLowerCase()) {
+        case "trauma": return "cat-trauma";
+        case "cardiac": return "cat-cardiac";
+        case "airway": return "cat-airway";
+        case "neuro": return "cat-neuro";
+        default: return "cat-other";
+      }
+    }
+
     function renderServices() {
       const container = document.getElementById("servicesContainer");
       const favContainer = document.getElementById("favoritesContainer");
@@ -264,17 +317,19 @@
         favDiv.className = "service";
         favDiv.innerHTML = "<h2>⭐ Favorites</h2>";
         favorites
-          .filter(p => p.name.toLowerCase().includes(search))
-          .forEach((protocol, pIndex) => {
+          .filter(p => p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search))
+          .forEach(protocol => {
             const protoDiv = document.createElement("div");
             protoDiv.className = "protocol";
             protoDiv.innerHTML = `
-              <div>
+              <div class="protocol-left">
                 <strong>${protocol.name}</strong>
-                <span>${protocol.category}</span>
+                <span class="category ${categoryClass(protocol.category)}">${protocol.category}</span>
                 <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
               </div>
-              <button class="secondary" onclick='toggleFavorite(${JSON.stringify(protocol)})'>Unpin</button>
+              <div class="protocol-right">
+                <button class="secondary" onclick='toggleFavorite(${JSON.stringify(protocol)})'>Unpin</button>
+              </div>
             `;
             favDiv.appendChild(protoDiv);
           });
@@ -290,8 +345,8 @@
         header.className = "service-header";
         header.innerHTML = `<h2>${service.name}</h2>
           <div>
-            <button onclick="addProtocol(${sIndex})">➕ Protocol</button>
-            <button class="danger" onclick="removeService(${sIndex})">🗑 Remove</button>
+            ${!readOnly ? `<button onclick="addProtocol(${sIndex})">➕ Protocol</button>` : ""}
+            ${!readOnly ? `<button class="danger" onclick="removeService(${sIndex})">🗑 Remove</button>` : ""}
             <button class="secondary" onclick="toggleProtocols('protocols-${sIndex}')">Toggle</button>
           </div>`;
         serviceDiv.appendChild(header);
@@ -306,16 +361,16 @@
             const protoDiv = document.createElement("div");
             protoDiv.className = "protocol";
             protoDiv.innerHTML = `
-              <div>
+              <div class="protocol-left">
                 <strong>${protocol.name}</strong>
-                <span>${protocol.category}</span>
+                <span class="category ${categoryClass(protocol.category)}">${protocol.category}</span>
                 <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
               </div>
-              <div>
-                <button class="secondary" onclick='toggleFavorite(${sIndex}, ${pIndex})'>
+              <div class="protocol-right">
+                <button class="secondary" onclick='toggleFavorite(services[${sIndex}].protocols[${pIndex}])'>
                   ${isFavorite(protocol) ? "⭐ Unpin" : "⭐ Pin"}
                 </button>
-                <button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>
+                ${!readOnly ? `<button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>` : ""}
               </div>
             `;
             protos.appendChild(protoDiv);
