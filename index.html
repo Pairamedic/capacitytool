@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ALS Unit Stock Sheet</title>
 
 <style>
@@ -9,52 +12,80 @@
 
 body {
     margin: 0;
-    font-family: Arial;
-    background: #121212;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
 }
 
 /* CONTROLS */
 .controls {
-    text-align: center;
+    position: sticky;
+    top: 0;
+    background: #ffffff;
     padding: 10px;
-    background: #1e1e1e;
-}
-button {
-    padding: 8px 14px;
-    margin: 5px;
-    background: #333;
-    color: white;
-    border: none;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    z-index: 999;
 }
 
-/* PAGE */
+button {
+    padding: 10px 14px;
+    margin: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* PAGE WRAPPER */
+.wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+/* SHEET */
 .sheet {
     position: relative;
     width: 816px;
     height: 1056px;
-    margin: auto;
-    display: none;
     background-size: contain;
     background-repeat: no-repeat;
+    display: none;
 }
-.active { display: block; }
 
-/* FIELDS */
+.active {
+    display: block;
+}
+
+/* INPUTS */
 input {
     position: absolute;
-    font-size: 10px;
-    padding: 1px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: 1px solid #444;
+    font-size: 11px;
+    padding: 2px;
+    border: 1px solid #999;
+    background: rgba(255,255,255,0.8);
+}
+
+/* MOBILE SCALE */
+@media (max-width: 900px) {
+    .sheet {
+        transform: scale(0.95);
+        transform-origin: top center;
+    }
 }
 
 /* PRINT */
 @media print {
-    .controls { display:none; }
-    body { background:white; }
-    .sheet { display:block !important; page-break-after: always; }
-    input { border:none; background:transparent; color:black; }
+    .controls { display: none; }
+    body { background: white; }
+
+    .sheet {
+        display: block !important;
+        transform: none !important;
+        page-break-after: always;
+    }
+
+    input {
+        border: none;
+        background: transparent;
+    }
 }
 </style>
 </head>
@@ -67,100 +98,88 @@ input {
 <button onclick="window.print()">Export PDF</button>
 </div>
 
+<div class="wrapper">
+
 <!-- ================= PAGE 1 ================= -->
-<div id="page1" class="sheet active" style="background-image:url('page1.jpg')">
+<div id="page1" class="sheet active" style="background-image:url('./images/page1.jpg')">
 
 <script>
-function f(id, t, l, w){
+function f(id,t,l,w){
 document.write(`<input style="top:${t}px;left:${l}px;width:${w}px" data-id="${id}">`);
 }
 </script>
 
-<!-- LEFT COLUMN (MEDS FULL LIST) -->
+<!-- LEFT COLUMN -->
 <script>
 let y=142;
 for(let i=0;i<40;i++){
-f(`p1_l_q_${i}`,y,38,38);
-f(`p1_l_a_${i}`,y,78,38);
-f(`p1_l_e_${i}`,y,300,120);
-y+=20.8;
+f(`p1_l_q_${i}`,y,38,42);
+f(`p1_l_a_${i}`,y,82,42);
+f(`p1_l_e_${i}`,y,300,130);
+y+=21;
 }
 </script>
 
-<!-- CENTER (IV POUCH 1 & 2) -->
+<!-- CENTER -->
 <script>
 y=142;
 for(let i=0;i<32;i++){
-f(`p1_c_q_${i}`,y,415,36);
-f(`p1_c_a_${i}`,y,452,36);
-y+=20.8;
+f(`p1_c_q_${i}`,y,415,42);
+f(`p1_c_a_${i}`,y,460,42);
+y+=21;
 }
 </script>
 
-<!-- RIGHT (POCKETS / AIRWAY / BLADES) -->
+<!-- RIGHT -->
 <script>
 y=142;
 for(let i=0;i<32;i++){
-f(`p1_r_q_${i}`,y,645,36);
-f(`p1_r_a_${i}`,y,682,36);
-y+=20.8;
+f(`p1_r_q_${i}`,y,650,42);
+f(`p1_r_a_${i}`,y,695,42);
+y+=21;
 }
 </script>
 
-<!-- BOTTOM CRITICAL BANDS -->
-<script>
-f("trauma_band_qty",910,580,50);
-f("stroke_band_qty",940,580,50);
-</script>
+<!-- BANDS -->
+<input style="top:910px; left:580px; width:60px;" data-id="trauma_band_qty">
+<input style="top:940px; left:580px; width:60px;" data-id="stroke_band_qty">
 
 </div>
 
 <!-- ================= PAGE 2 ================= -->
-<div id="page2" class="sheet" style="background-image:url('page2.jpg')">
+<div id="page2" class="sheet" style="background-image:url('./images/page2.jpg')">
 
 <!-- HEADER -->
-<input style="top:58px; left:90px; width:160px;" data-id="date">
-<input style="top:58px; left:285px; width:120px;" data-id="unit">
-<input style="top:58px; left:430px; width:140px;" data-id="narc">
-<input style="top:58px; left:600px; width:80px;" data-id="o2main">
+<input style="top:60px; left:90px; width:160px;" data-id="date">
+<input style="top:60px; left:285px; width:130px;" data-id="unit">
+<input style="top:60px; left:430px; width:150px;" data-id="narc">
+<input style="top:60px; left:610px; width:90px;" data-id="o2main">
 
-<input style="top:92px; left:110px; width:200px;" data-id="paramedic">
-<input style="top:92px; left:360px; width:200px;" data-id="emt">
+<input style="top:95px; left:110px; width:210px;" data-id="paramedic">
+<input style="top:95px; left:360px; width:210px;" data-id="emt">
 
-<!-- LEFT COLUMN (MISC + SUCTION + O2 + BSI) -->
 <script>
 y=150;
 for(let i=0;i<42;i++){
-f(`p2_l_q_${i}`,y,38,36);
-f(`p2_l_a_${i}`,y,75,36);
-y+=20.6;
-}
-</script>
+f(`p2_l_q_${i}`,y,38,42);
+f(`p2_l_a_${i}`,y,82,42);
 
-<!-- CENTER (IV + AIRWAY FULL LIST) -->
-<script>
-y=150;
-for(let i=0;i<42;i++){
-f(`p2_c_q_${i}`,y,350,36);
-f(`p2_c_a_${i}`,y,387,36);
-y+=20.6;
-}
-</script>
+f(`p2_c_q_${i}`,y,350,42);
+f(`p2_c_a_${i}`,y,395,42);
 
-<!-- RIGHT (MONITOR / O2 / IMMOBILIZATION / TRAUMA) -->
-<script>
-y=150;
-for(let i=0;i<42;i++){
-f(`p2_r_q_${i}`,y,650,36);
-f(`p2_r_a_${i}`,y,687,36);
-y+=20.6;
+f(`p2_r_q_${i}`,y,650,42);
+f(`p2_r_a_${i}`,y,695,42);
+
+y+=21;
 }
 </script>
 
 </div>
 
-<!-- SCRIPT -->
+</div>
+
 <script>
+// PAGE SWITCH
 function showPage(n){
 document.querySelectorAll('.sheet').forEach(p=>p.classList.remove('active'));
 document.getElementById('page'+n).classList.add('active');
