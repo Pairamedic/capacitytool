@@ -1,167 +1,200 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>ALS Unit Stock Sheet</title>
 
 <style>
-@page { size: letter; margin: 0; }
-
 body {
-    margin: 0;
-    font-family: Arial;
-    background: #f0f0f0;
+  font-family: Arial;
+  margin: 0;
+  background: #f0f0f0;
 }
 
-/* TOP BAR */
-.controls {
-    position: sticky;
-    top: 0;
-    background: white;
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    z-index: 10;
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 15px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.nav {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 button {
-    padding: 10px;
-    margin: 5px;
+  padding: 10px;
+  margin: 5px;
+  font-size: 14px;
 }
 
-/* PAGE */
-.sheet {
-    position: relative;
-    width: 816px;
-    height: 1056px;
-    margin: 10px auto;
-    background-size: cover;
-    background-position: center;
-    display: none;
+.section {
+  margin-top: 15px;
 }
 
-.active { display: block; }
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 8px;
+}
 
-/* INPUT */
 input {
-    position: absolute;
-    font-size: 11px;
-    border: none;
-    border-bottom: 1px solid black;
-    background: transparent;
+  width: 100%;
+  padding: 6px;
+  margin-top: 3px;
+  box-sizing: border-box;
 }
 
-/* MOBILE */
-@media (max-width: 900px) {
-    .sheet {
-        transform: scale(0.95);
-        transform-origin: top center;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
 }
 
-/* PRINT */
-@media print {
-    .controls { display: none; }
-    body { background: white; }
+td, th {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
 
-    .sheet {
-        display: block !important;
-        transform: none;
-        page-break-after: always;
-    }
-
-    input {
-        border: none;
-    }
+.hidden {
+  display: none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="controls">
-<button onclick="showPage(1)">Page 1</button>
-<button onclick="showPage(2)">Page 2</button>
-<button onclick="window.print()">Export PDF</button>
+<div class="container">
+
+<h2>ALS Unit Stock Sheet</h2>
+
+<div class="nav">
+  <button onclick="showPage(1)">Page 1</button>
+  <button onclick="showPage(2)">Page 2</button>
+  <button onclick="window.print()">Export PDF</button>
 </div>
 
 <!-- PAGE 1 -->
-<div id="page1" class="sheet active"
-style="background-image:url('./page1.jpeg')">
+<div id="page1">
 
-<!-- HEADER -->
-<input style="top:80px; left:90px; width:150px;" data-id="date">
-<input style="top:80px; left:270px; width:120px;" data-id="unit">
-<input style="top:80px; left:420px; width:150px;" data-id="narc">
-<input style="top:80px; left:600px; width:100px;" data-id="o2">
+<div class="section">
+  <label>Date</label>
+  <input id="date">
 
-<input style="top:110px; left:110px; width:220px;" data-id="paramedic">
-<input style="top:110px; left:380px; width:220px;" data-id="emt">
+  <label>Unit</label>
+  <input id="unit">
 
-<script>
-let y=150;
-for(let i=0;i<50;i++){
-document.write(`<input style="top:${y}px; left:40px; width:50px" data-id="p1_${i}_q">`);
-document.write(`<input style="top:${y}px; left:100px; width:50px" data-id="p1_${i}_a">`);
-document.write(`<input style="top:${y}px; left:160px; width:200px" data-id="p1_${i}_desc">`);
+  <label>Paramedic</label>
+  <input id="paramedic">
 
-document.write(`<input style="top:${y}px; left:400px; width:50px" data-id="p1_${i}_q2">`);
-document.write(`<input style="top:${y}px; left:460px; width:50px" data-id="p1_${i}_a2">`);
+  <label>EMT</label>
+  <input id="emt">
+</div>
 
-document.write(`<input style="top:${y}px; left:650px; width:50px" data-id="p1_${i}_q3">`);
-document.write(`<input style="top:${y}px; left:710px; width:50px" data-id="p1_${i}_a3">`);
+<div class="section">
+<h3>Medications</h3>
+<table>
+<tr><th>Item</th><th>Qty</th></tr>
+<tr><td>Epinephrine</td><td><input></td></tr>
+<tr><td>Narcan</td><td><input></td></tr>
+<tr><td>Amiodarone</td><td><input></td></tr>
+<tr><td>Lidocaine</td><td><input></td></tr>
+<tr><td>Atropine</td><td><input></td></tr>
+<tr><td>Magnesium</td><td><input></td></tr>
+<tr><td>Sodium Bicarb</td><td><input></td></tr>
+<tr><td>D10</td><td><input></td></tr>
+<tr><td>Lasix</td><td><input></td></tr>
+<tr><td>Adenosine</td><td><input></td></tr>
+<tr><td>Zofran</td><td><input></td></tr>
+<tr><td>Nitro</td><td><input></td></tr>
+<tr><td>Benadryl</td><td><input></td></tr>
+</table>
+</div>
 
-y+=18;
-}
-</script>
+<div class="section">
+<h3>IV Supplies</h3>
+<table>
+<tr><td>NS 500ml</td><td><input></td></tr>
+<tr><td>NS 1000ml</td><td><input></td></tr>
+<tr><td>IV Catheters</td><td><input></td></tr>
+<tr><td>Saline Flushes</td><td><input></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h3>Airway</h3>
+<table>
+<tr><td>OPA</td><td><input></td></tr>
+<tr><td>NPA</td><td><input></td></tr>
+<tr><td>BVM Adult</td><td><input></td></tr>
+<tr><td>BVM Pediatric</td><td><input></td></tr>
+</table>
+</div>
 
 </div>
 
 <!-- PAGE 2 -->
-<div id="page2" class="sheet"
-style="background-image:url('./page2.jpeg')">
+<div id="page2" class="hidden">
 
-<script>
-y=140;
-for(let i=0;i<55;i++){
-document.write(`<input style="top:${y}px; left:40px; width:50px" data-id="p2_${i}_q">`);
-document.write(`<input style="top:${y}px; left:100px; width:50px" data-id="p2_${i}_a">`);
-document.write(`<input style="top:${y}px; left:160px; width:200px" data-id="p2_${i}_desc">`);
+<div class="section">
+<h3>Misc Equipment</h3>
+<table>
+<tr><td>Glucometer</td><td><input></td></tr>
+<tr><td>BP Cuffs</td><td><input></td></tr>
+<tr><td>Stethoscope</td><td><input></td></tr>
+<tr><td>Shears</td><td><input></td></tr>
+<tr><td>Thermometer</td><td><input></td></tr>
+</table>
+</div>
 
-document.write(`<input style="top:${y}px; left:400px; width:50px" data-id="p2_${i}_q2">`);
-document.write(`<input style="top:${y}px; left:460px; width:50px" data-id="p2_${i}_a2">`);
+<div class="section">
+<h3>Oxygen Supplies</h3>
+<table>
+<tr><td>Nasal Cannula</td><td><input></td></tr>
+<tr><td>Non-Rebreather</td><td><input></td></tr>
+<tr><td>Nebulizer</td><td><input></td></tr>
+<tr><td>CPAP</td><td><input></td></tr>
+</table>
+</div>
 
-document.write(`<input style="top:${y}px; left:650px; width:50px" data-id="p2_${i}_q3">`);
-document.write(`<input style="top:${y}px; left:710px; width:50px" data-id="p2_${i}_a3">`);
+<div class="section">
+<h3>Trauma</h3>
+<table>
+<tr><td>ABD Pads</td><td><input></td></tr>
+<tr><td>4x4 Gauze</td><td><input></td></tr>
+<tr><td>Tourniquet</td><td><input></td></tr>
+<tr><td>Splints</td><td><input></td></tr>
+</table>
+</div>
 
-y+=18;
-}
-</script>
+</div>
 
 </div>
 
 <script>
-function showPage(n){
-document.querySelectorAll('.sheet').forEach(p=>p.classList.remove('active'));
-document.getElementById('page'+n).classList.add('active');
+// PAGE SWITCH
+function showPage(page) {
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.add("hidden");
+
+  document.getElementById("page" + page).classList.remove("hidden");
 }
 
-// SAVE
-document.addEventListener("input", e=>{
-if(e.target.tagName==="INPUT"){
-localStorage.setItem(e.target.dataset.id, e.target.value);
-}
-});
+// AUTO SAVE
+document.querySelectorAll("input").forEach((input, i) => {
+  const key = "field_" + i;
 
-// LOAD
-window.onload=()=>{
-document.querySelectorAll("input").forEach(i=>{
-let v=localStorage.getItem(i.dataset.id);
-if(v) i.value=v;
+  input.value = localStorage.getItem(key) || "";
+
+  input.addEventListener("input", () => {
+    localStorage.setItem(key, input.value);
+  });
 });
-};
 </script>
 
 </body>
