@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>ALS Unit Stock Sheet</title>
@@ -12,58 +11,49 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
+    font-family: Arial;
+    background: #f0f0f0;
 }
 
-/* CONTROLS */
+/* TOP BAR */
 .controls {
     position: sticky;
     top: 0;
-    background: #ffffff;
+    background: white;
     padding: 10px;
     text-align: center;
     border-bottom: 1px solid #ccc;
-    z-index: 999;
+    z-index: 10;
 }
 
 button {
-    padding: 10px 14px;
+    padding: 10px;
     margin: 5px;
-    font-size: 14px;
-    cursor: pointer;
 }
 
-/* PAGE WRAPPER */
-.wrapper {
-    display: flex;
-    justify-content: center;
-}
-
-/* SHEET */
+/* PAGE */
 .sheet {
     position: relative;
     width: 816px;
     height: 1056px;
-    background-size: contain;
-    background-repeat: no-repeat;
+    margin: 10px auto;
+    background-size: cover;
+    background-position: center;
     display: none;
 }
 
-.active {
-    display: block;
-}
+.active { display: block; }
 
-/* INPUTS */
+/* INPUT */
 input {
     position: absolute;
     font-size: 11px;
-    padding: 2px;
-    border: 1px solid #999;
-    background: rgba(255,255,255,0.8);
+    border: none;
+    border-bottom: 1px solid black;
+    background: transparent;
 }
 
-/* MOBILE SCALE */
+/* MOBILE */
 @media (max-width: 900px) {
     .sheet {
         transform: scale(0.95);
@@ -78,13 +68,12 @@ input {
 
     .sheet {
         display: block !important;
-        transform: none !important;
+        transform: none;
         page-break-after: always;
     }
 
     input {
         border: none;
-        background: transparent;
     }
 }
 </style>
@@ -98,94 +87,68 @@ input {
 <button onclick="window.print()">Export PDF</button>
 </div>
 
-<div class="wrapper">
-
-<!-- ================= PAGE 1 ================= -->
-<div id="page1" class="sheet active" style="background-image:url('./images/page1.jpg')">
-
-<script>
-function f(id,t,l,w){
-document.write(`<input style="top:${t}px;left:${l}px;width:${w}px" data-id="${id}">`);
-}
-</script>
-
-<!-- LEFT COLUMN -->
-<script>
-let y=142;
-for(let i=0;i<40;i++){
-f(`p1_l_q_${i}`,y,38,42);
-f(`p1_l_a_${i}`,y,82,42);
-f(`p1_l_e_${i}`,y,300,130);
-y+=21;
-}
-</script>
-
-<!-- CENTER -->
-<script>
-y=142;
-for(let i=0;i<32;i++){
-f(`p1_c_q_${i}`,y,415,42);
-f(`p1_c_a_${i}`,y,460,42);
-y+=21;
-}
-</script>
-
-<!-- RIGHT -->
-<script>
-y=142;
-for(let i=0;i<32;i++){
-f(`p1_r_q_${i}`,y,650,42);
-f(`p1_r_a_${i}`,y,695,42);
-y+=21;
-}
-</script>
-
-<!-- BANDS -->
-<input style="top:910px; left:580px; width:60px;" data-id="trauma_band_qty">
-<input style="top:940px; left:580px; width:60px;" data-id="stroke_band_qty">
-
-</div>
-
-<!-- ================= PAGE 2 ================= -->
-<div id="page2" class="sheet" style="background-image:url('./images/page2.jpg')">
+<!-- PAGE 1 -->
+<div id="page1" class="sheet active"
+style="background-image:url('./page1.jpg')">
 
 <!-- HEADER -->
-<input style="top:60px; left:90px; width:160px;" data-id="date">
-<input style="top:60px; left:285px; width:130px;" data-id="unit">
-<input style="top:60px; left:430px; width:150px;" data-id="narc">
-<input style="top:60px; left:610px; width:90px;" data-id="o2main">
+<input style="top:80px; left:90px; width:150px;" data-id="date">
+<input style="top:80px; left:270px; width:120px;" data-id="unit">
+<input style="top:80px; left:420px; width:150px;" data-id="narc">
+<input style="top:80px; left:600px; width:100px;" data-id="o2">
 
-<input style="top:95px; left:110px; width:210px;" data-id="paramedic">
-<input style="top:95px; left:360px; width:210px;" data-id="emt">
+<input style="top:110px; left:110px; width:220px;" data-id="paramedic">
+<input style="top:110px; left:380px; width:220px;" data-id="emt">
 
 <script>
-y=150;
-for(let i=0;i<42;i++){
-f(`p2_l_q_${i}`,y,38,42);
-f(`p2_l_a_${i}`,y,82,42);
+let y=150;
+for(let i=0;i<50;i++){
+document.write(`<input style="top:${y}px; left:40px; width:50px" data-id="p1_${i}_q">`);
+document.write(`<input style="top:${y}px; left:100px; width:50px" data-id="p1_${i}_a">`);
+document.write(`<input style="top:${y}px; left:160px; width:200px" data-id="p1_${i}_desc">`);
 
-f(`p2_c_q_${i}`,y,350,42);
-f(`p2_c_a_${i}`,y,395,42);
+document.write(`<input style="top:${y}px; left:400px; width:50px" data-id="p1_${i}_q2">`);
+document.write(`<input style="top:${y}px; left:460px; width:50px" data-id="p1_${i}_a2">`);
 
-f(`p2_r_q_${i}`,y,650,42);
-f(`p2_r_a_${i}`,y,695,42);
+document.write(`<input style="top:${y}px; left:650px; width:50px" data-id="p1_${i}_q3">`);
+document.write(`<input style="top:${y}px; left:710px; width:50px" data-id="p1_${i}_a3">`);
 
-y+=21;
+y+=18;
 }
 </script>
 
 </div>
 
+<!-- PAGE 2 -->
+<div id="page2" class="sheet"
+style="background-image:url('./page2.jpg')">
+
+<script>
+y=140;
+for(let i=0;i<55;i++){
+document.write(`<input style="top:${y}px; left:40px; width:50px" data-id="p2_${i}_q">`);
+document.write(`<input style="top:${y}px; left:100px; width:50px" data-id="p2_${i}_a">`);
+document.write(`<input style="top:${y}px; left:160px; width:200px" data-id="p2_${i}_desc">`);
+
+document.write(`<input style="top:${y}px; left:400px; width:50px" data-id="p2_${i}_q2">`);
+document.write(`<input style="top:${y}px; left:460px; width:50px" data-id="p2_${i}_a2">`);
+
+document.write(`<input style="top:${y}px; left:650px; width:50px" data-id="p2_${i}_q3">`);
+document.write(`<input style="top:${y}px; left:710px; width:50px" data-id="p2_${i}_a3">`);
+
+y+=18;
+}
+</script>
+
 </div>
 
 <script>
-// PAGE SWITCH
 function showPage(n){
 document.querySelectorAll('.sheet').forEach(p=>p.classList.remove('active'));
 document.getElementById('page'+n).classList.add('active');
 }
 
-// AUTOSAVE
+// SAVE
 document.addEventListener("input", e=>{
 if(e.target.tagName==="INPUT"){
 localStorage.setItem(e.target.dataset.id, e.target.value);
