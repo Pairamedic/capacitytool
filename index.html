@@ -1,388 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>EMS Protocol Manager</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    /* ===== Dark Theme ===== */
+<meta charset="UTF-8">
+<title>ALS Unit Stock Sheet</title>
+<style>
     body {
-      font-family: "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      background: #121212;
-      color: #e0e0e0;
-      line-height: 1.5;
+        font-family: Arial, sans-serif;
+        margin: 20px;
     }
     h1 {
-      text-align: center;
-      padding: 15px;
-      font-size: 1.6rem;
-      color: #00bcd4;
-      margin: 0;
-      border-bottom: 1px solid #333;
+        text-align: center;
     }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 15px;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
     }
-
-    /* ===== Sticky Top Bar ===== */
-    .topbar {
-      position: sticky;
-      top: 0;
-      background: #1e1e1e;
-      padding: 10px;
-      z-index: 100;
-      border-bottom: 1px solid #333;
+    th, td {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 12px;
+        text-align: left;
     }
-    .topbar input {
-      width: 65%;
+    th {
+        background: #eee;
     }
-    .topbar button {
-      float: right;
+    input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 12px;
     }
-
-    /* ===== Service Cards ===== */
-    .service {
-      background: #1e1e1e;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    .section-title {
+        background: #ccc;
+        font-weight: bold;
+        text-align: center;
     }
-    .service-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+    .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 20px;
     }
-    .service-header h2 {
-      margin: 0;
-      color: #fff;
-      font-size: 1.2rem;
-    }
-
-    /* ===== Protocol Cards ===== */
-    .protocol {
-      background: #2a2a2a;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .protocol-left {
-      flex: 1;
-      min-width: 200px;
-    }
-    .protocol strong { color: #fff; display:block; }
-    .protocol span {
-      font-size: 0.8rem;
-      color: #bbb;
-    }
-    .protocol a {
-      color: #00bcd4;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 4px;
-    }
-    .protocol a:hover { text-decoration: underline; }
-
-    /* ===== Category Labels ===== */
-    .category {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 5px;
-      font-size: 0.75rem;
-      margin-top: 4px;
-    }
-    .cat-trauma { background: #b71c1c; color: #fff; }
-    .cat-cardiac { background: #1565c0; color: #fff; }
-    .cat-airway { background: #2e7d32; color: #fff; }
-    .cat-neuro { background: #6a1b9a; color: #fff; }
-    .cat-other { background: #555; color: #fff; }
-
-    /* ===== Buttons & Inputs ===== */
-    button, input[type=text] {
-      padding: 8px 12px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    button {
-      background: #00bcd4;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover { background: #0097a7; }
-    button.danger { background: #e53935; }
-    button.danger:hover { background: #b71c1c; }
-    button.secondary { background: #444; }
-    input[type=text] {
-      background: #2a2a2a;
-      color: #fff;
-    }
-
-    /* ===== Collapsible Content ===== */
-    .protocols { display: none; margin-top: 10px; }
-    .protocols.open { display: block; }
-
-    /* ===== Modal Viewer ===== */
-    #viewerModal {
-      display: none; /* fully hidden until opened */
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-    #viewerModal iframe {
-      width: 95%; height: 90%;
-      border: none;
-      background: #121212; /* dark background to avoid white flash */
-      border-radius: 8px;
-    }
-    #viewerModal button {
-      margin-bottom: 10px;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-      .topbar input { width: 100%; margin-bottom: 8px; }
-      .topbar button { float: none; width: 100%; }
-      .protocol { flex-direction: column; align-items: flex-start; }
-      .protocol-right { width: 100%; margin-top: 5px; display: flex; gap: 5px; }
-      .protocol-right button { flex: 1; }
-    }
-  </style>
-</head>
-<body>
-  <h1>🚑 EMS Protocol Manager</h1>
-
-  <!-- Sticky Topbar -->
-  <div class="topbar container">
-    <input type="text" id="searchBox" placeholder="Search protocols..." oninput="renderServices()">
-    <button class="secondary" onclick="toggleReadOnly()">Toggle Read-Only</button>
-  </div>
-
-  <div class="container">
-    <!-- Add Service -->
-    <div>
-      <input type="text" id="serviceName" placeholder="New Ambulance Service">
-      <button onclick="addService()">Add Service</button>
-    </div>
-
-    <!-- Favorites Section -->
-    <div id="favoritesContainer"></div>
-
-    <!-- Services -->
-    <div id="servicesContainer"></div>
-  </div>
-
-  <!-- Modal Viewer -->
-  <div id="viewerModal">
-    <button class="danger" onclick="closeViewer()">Close ✖</button>
-    <iframe id="viewerFrame"></iframe>
-  </div>
-
-  <script>
-    let services = JSON.parse(localStorage.getItem("services")) || [];
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    let readOnly = false;
-
-    function save() {
-      localStorage.setItem("services", JSON.stringify(services));
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-    }
-
-    function addService() {
-      const name = document.getElementById("serviceName").value.trim();
-      if (!name) return;
-      services.push({ name, protocols: [] });
-      document.getElementById("serviceName").value = "";
-      save();
-      renderServices();
-    }
-
-    function removeService(index) {
-      if (!readOnly && confirm("Remove this service?")) {
-        services.splice(index, 1);
-        save();
-        renderServices();
-      }
-    }
-
-    function toggleProtocols(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle("open");
-    }
-
-    function addProtocol(serviceIndex) {
-      if (readOnly) return;
-      const name = prompt("Protocol name:");
-      if (!name) return;
-
-      const categories = ["Trauma","Cardiac","Airway","Neuro","Other"];
-      let category = prompt("Category (Trauma, Cardiac, Airway, Neuro, Other):") || "Other";
-      if (!categories.includes(category)) category = "Other";
-
-      const fileInput = document.createElement("input");
-      fileInput.type = "file";
-      fileInput.accept = ".pdf,.jpg,.jpeg,.png,.gif";
-      fileInput.onchange = e => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            services[serviceIndex].protocols.push({
-              name,
-              category,
-              fileName: file.name,
-              fileData: reader.result
-            });
-            save();
-            renderServices();
-          };
-          reader.readAsDataURL(file);
+    @media print {
+        .btn {
+            display: none;
         }
-      };
-      fileInput.click();
     }
+</style>
+</head>
 
-    function removeProtocol(serviceIndex, protocolIndex) {
-      if (!readOnly && confirm("Remove this protocol?")) {
-        services[serviceIndex].protocols.splice(protocolIndex, 1);
-        save();
-        renderServices();
-      }
-    }
+<body>
 
-    function toggleFavorite(protocol) {
-      const exists = favorites.find(f => f.fileData === protocol.fileData);
-      if (exists) {
-        favorites = favorites.filter(f => f.fileData !== protocol.fileData);
-      } else {
-        favorites.push(protocol);
-      }
-      save();
-      renderServices();
-    }
+<h1>ALS Unit Stock Sheet</h1>
 
-    function isFavorite(protocol) {
-      return favorites.some(f => f.fileData === protocol.fileData);
-    }
+<button class="btn" onclick="window.print()">Export / Print as PDF</button>
 
-    function openViewer(dataUrl) {
-      document.getElementById("viewerFrame").src = dataUrl;
-      document.getElementById("viewerModal").style.display = "flex";
-    }
-    function closeViewer() {
-      document.getElementById("viewerModal").style.display = "none";
-      document.getElementById("viewerFrame").src = "";
-    }
+<!-- MEDICATIONS & SUPPLIES -->
+<table>
+    <tr>
+        <th>Qty</th>
+        <th>Act</th>
+        <th>Medications & Supplies</th>
+        <th>Expiration Date</th>
+    </tr>
 
-    function toggleReadOnly() {
-      readOnly = !readOnly;
-      renderServices();
-    }
+    <!-- Repeat rows as needed -->
+    <script>
+        const meds = [
+            "18g Needles","20g Needles","21g Needles",
+            "60mL Syringe","20mL Syringe","10mL Syringe","3mL Syringe","1mL Syringe",
+            "Albuterol","Atrovent","Atropine","Epi 1:1","Epi 1:10",
+            "Lidocaine","Lidocaine Drip","Dopamine Drip","Narcan",
+            "Magnesium","Calcium","Hydralazine","Sodium Bicarb","D10",
+            "Lasix","Adenosine","Zofran","Labetalol",
+            "Activated Charcoal","Thiamine","Nitro","Benadryl",
+            "Aspirin","Verapamil","Oral Glucose","Solu-Medrol",
+            "Bacteriostatic Water","Amiodarone","TXA","Glucagon","Diltiazem"
+        ];
 
-    function categoryClass(cat) {
-      switch (cat.toLowerCase()) {
-        case "trauma": return "cat-trauma";
-        case "cardiac": return "cat-cardiac";
-        case "airway": return "cat-airway";
-        case "neuro": return "cat-neuro";
-        default: return "cat-other";
-      }
-    }
+        document.write(meds.map(item => `
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td>${item}</td>
+                <td><input type="date"></td>
+            </tr>
+        `).join(""));
+    </script>
+</table>
 
-    function renderServices() {
-      const container = document.getElementById("servicesContainer");
-      const favContainer = document.getElementById("favoritesContainer");
-      container.innerHTML = "";
-      favContainer.innerHTML = "";
-      const search = document.getElementById("searchBox").value.toLowerCase();
+<!-- IV POUCH -->
+<table>
+    <tr><th colspan="4" class="section-title">IV Pouch</th></tr>
+    <tr>
+        <th>Qty</th>
+        <th>Act</th>
+        <th>Item</th>
+        <th>Notes</th>
+    </tr>
 
-      // Favorites
-      if (favorites.length > 0) {
-        const favDiv = document.createElement("div");
-        favDiv.className = "service";
-        favDiv.innerHTML = "<h2>⭐ Favorites</h2>";
-        favorites
-          .filter(p => p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search))
-          .forEach(protocol => {
-            const protoDiv = document.createElement("div");
-            protoDiv.className = "protocol";
-            protoDiv.innerHTML = `
-              <div class="protocol-left">
-                <strong>${protocol.name}</strong>
-                <span class="category ${categoryClass(protocol.category)}">${protocol.category}</span>
-                <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
-              </div>
-              <div class="protocol-right">
-                <button class="secondary" onclick='toggleFavorite(${JSON.stringify(protocol)})'>Unpin</button>
-              </div>
-            `;
-            favDiv.appendChild(protoDiv);
-          });
-        favContainer.appendChild(favDiv);
-      }
+    <script>
+        const ivItems = [
+            "NS 1000mL","10gtt set","Saline lock","Saline flush",
+            "14G IV Cath","16G IV Cath","18G IV Cath","20G IV Cath",
+            "22G IV Cath","24G IV Cath","Alcohol prep","4x4 Gauze","Tape"
+        ];
 
-      // Services
-      services.forEach((service, sIndex) => {
-        const serviceDiv = document.createElement("div");
-        serviceDiv.className = "service";
+        document.write(ivItems.map(item => `
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td>${item}</td>
+                <td><input type="text"></td>
+            </tr>
+        `).join(""));
+    </script>
+</table>
 
-        const header = document.createElement("div");
-        header.className = "service-header";
-        header.innerHTML = `<h2>${service.name}</h2>
-          <div>
-            ${!readOnly ? `<button onclick="addProtocol(${sIndex})">➕ Protocol</button>` : ""}
-            ${!readOnly ? `<button class="danger" onclick="removeService(${sIndex})">🗑 Remove</button>` : ""}
-            <button class="secondary" onclick="toggleProtocols('protocols-${sIndex}')">Toggle</button>
-          </div>`;
-        serviceDiv.appendChild(header);
+<!-- AIRWAY / TOOLS -->
+<table>
+    <tr><th colspan="4" class="section-title">Airway / Tools</th></tr>
+    <tr>
+        <th>Qty</th>
+        <th>Act</th>
+        <th>Item</th>
+        <th>Notes</th>
+    </tr>
 
-        const protos = document.createElement("div");
-        protos.className = "protocols";
-        protos.id = `protocols-${sIndex}`;
+    <script>
+        const airway = [
+            "Laryngoscope Handle","Mac 2 Blade","Mac 3 Blade","Mac 4 Blade",
+            "Miller 2 Blade","Miller 3 Blade","Miller 4 Blade",
+            "Adult BVM","Pediatric BVM","Magill Forceps (Adult)","Magill Forceps (Pediatric)"
+        ];
 
-        service.protocols
-          .filter(p => p.name.toLowerCase().includes(search) || p.category.toLowerCase().includes(search))
-          .forEach((protocol, pIndex) => {
-            const protoDiv = document.createElement("div");
-            protoDiv.className = "protocol";
-            protoDiv.innerHTML = `
-              <div class="protocol-left">
-                <strong>${protocol.name}</strong>
-                <span class="category ${categoryClass(protocol.category)}">${protocol.category}</span>
-                <a href="#" onclick="openViewer('${protocol.fileData}')">${protocol.fileName}</a>
-              </div>
-              <div class="protocol-right">
-                <button class="secondary" onclick='toggleFavorite(services[${sIndex}].protocols[${pIndex}])'>
-                  ${isFavorite(protocol) ? "⭐ Unpin" : "⭐ Pin"}
-                </button>
-                ${!readOnly ? `<button class="danger" onclick="removeProtocol(${sIndex}, ${pIndex})">🗑 Remove</button>` : ""}
-              </div>
-            `;
-            protos.appendChild(protoDiv);
-          });
+        document.write(airway.map(item => `
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td>${item}</td>
+                <td><input type="text"></td>
+            </tr>
+        `).join(""));
+    </script>
+</table>
 
-        serviceDiv.appendChild(protos);
-        container.appendChild(serviceDiv);
-      });
-    }
+<!-- TRAUMA / BANDAGING -->
+<table>
+    <tr><th colspan="4" class="section-title">Bandaging / Misc</th></tr>
+    <tr>
+        <th>Qty</th>
+        <th>Act</th>
+        <th>Item</th>
+        <th>Notes</th>
+    </tr>
 
-    renderServices();
-  </script>
+    <script>
+        const misc = [
+            "Trauma Dressing","ABD Pads","Vaseline Gauze",
+            "Kerlix","Hemostats","CAT Tourniquet"
+        ];
+
+        document.write(misc.map(item => `
+            <tr>
+                <td><input type="text"></td>
+                <td><input type="text"></td>
+                <td>${item}</td>
+                <td><input type="text"></td>
+            </tr>
+        `).join(""));
+    </script>
+</table>
+
+<!-- CRITICAL BANDS -->
+<table>
+    <tr><th colspan="3" class="section-title">Critical Dx Bands</th></tr>
+    <tr>
+        <th>Qty</th>
+        <th>Act</th>
+        <th>Type</th>
+    </tr>
+    <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>Trauma Bands</td>
+    </tr>
+    <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>Stroke Bands</td>
+    </tr>
+</table>
+
 </body>
 </html>
