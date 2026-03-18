@@ -9,28 +9,23 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #121212;
-    color: white;
 }
 
-/* HEADER */
+/* CONTROLS */
 .controls {
     text-align: center;
     padding: 10px;
     background: #1e1e1e;
 }
-
 button {
+    padding: 8px 14px;
     margin: 5px;
-    padding: 10px 15px;
     background: #333;
     color: white;
     border: none;
-    cursor: pointer;
 }
-
-button:hover { background: #555; }
 
 /* PAGE */
 .sheet {
@@ -42,37 +37,24 @@ button:hover { background: #555; }
     background-size: contain;
     background-repeat: no-repeat;
 }
-
 .active { display: block; }
 
-/* INPUT FIELDS */
-.field {
-    position: absolute;
-}
-
+/* FIELDS */
 input {
-    background: rgba(0,0,0,0.65);
-    border: 1px solid #444;
+    position: absolute;
+    font-size: 10px;
+    padding: 1px;
+    background: rgba(0,0,0,0.6);
     color: white;
-    font-size: 11px;
-    padding: 2px;
+    border: 1px solid #444;
 }
 
-/* PRINT MODE */
+/* PRINT */
 @media print {
-    body { background: white; }
-    .controls { display: none; }
-
-    .sheet {
-        display: block !important;
-        page-break-after: always;
-    }
-
-    input {
-        background: transparent;
-        border: none;
-        color: black;
-    }
+    .controls { display:none; }
+    body { background:white; }
+    .sheet { display:block !important; page-break-after: always; }
+    input { border:none; background:transparent; color:black; }
 }
 </style>
 </head>
@@ -80,50 +62,55 @@ input {
 <body>
 
 <div class="controls">
-    <button onclick="showPage(1)">Page 1</button>
-    <button onclick="showPage(2)">Page 2</button>
-    <button onclick="window.print()">Export PDF</button>
+<button onclick="showPage(1)">Page 1</button>
+<button onclick="showPage(2)">Page 2</button>
+<button onclick="window.print()">Export PDF</button>
 </div>
 
 <!-- ================= PAGE 1 ================= -->
 <div id="page1" class="sheet active" style="background-image:url('page1.jpg')">
 
-<!-- SAMPLE ROW ALIGNMENT (LEFT COLUMN MEDS) -->
 <script>
-function addField(page, top, left, width, id){
-    document.write(`<input class="field" style="top:${top}px;left:${left}px;width:${width}px" data-id="${id}">`);
+function f(id, t, l, w){
+document.write(`<input style="top:${t}px;left:${l}px;width:${w}px" data-id="${id}">`);
 }
 </script>
 
-<!-- Generate rows dynamically -->
+<!-- LEFT COLUMN (MEDS FULL LIST) -->
 <script>
-let y = 150;
-for(let i=0;i<35;i++){
-    addField(1,y,40,40,`p1_qty_${i}`);
-    addField(1,y,85,40,`p1_act_${i}`);
-    addField(1,y,300,120,`p1_exp_${i}`);
-    y += 22;
+let y=142;
+for(let i=0;i<40;i++){
+f(`p1_l_q_${i}`,y,38,38);
+f(`p1_l_a_${i}`,y,78,38);
+f(`p1_l_e_${i}`,y,300,120);
+y+=20.8;
 }
 </script>
 
-<!-- IV POUCH (center column) -->
+<!-- CENTER (IV POUCH 1 & 2) -->
 <script>
-y = 150;
-for(let i=0;i<25;i++){
-    addField(1,y,420,40,`p1_iv_qty_${i}`);
-    addField(1,y,465,40,`p1_iv_act_${i}`);
-    y += 22;
+y=142;
+for(let i=0;i<32;i++){
+f(`p1_c_q_${i}`,y,415,36);
+f(`p1_c_a_${i}`,y,452,36);
+y+=20.8;
 }
 </script>
 
-<!-- RIGHT COLUMN -->
+<!-- RIGHT (POCKETS / AIRWAY / BLADES) -->
 <script>
-y = 150;
-for(let i=0;i<25;i++){
-    addField(1,y,650,40,`p1_r_qty_${i}`);
-    addField(1,y,695,40,`p1_r_act_${i}`);
-    y += 22;
+y=142;
+for(let i=0;i<32;i++){
+f(`p1_r_q_${i}`,y,645,36);
+f(`p1_r_a_${i}`,y,682,36);
+y+=20.8;
 }
+</script>
+
+<!-- BOTTOM CRITICAL BANDS -->
+<script>
+f("trauma_band_qty",910,580,50);
+f("stroke_band_qty",940,580,50);
 </script>
 
 </div>
@@ -131,68 +118,67 @@ for(let i=0;i<25;i++){
 <!-- ================= PAGE 2 ================= -->
 <div id="page2" class="sheet" style="background-image:url('page2.jpg')">
 
-<!-- HEADER FIELDS -->
-<input class="field" style="top:60px; left:100px; width:150px;" data-id="date">
-<input class="field" style="top:60px; left:300px; width:120px;" data-id="unit">
-<input class="field" style="top:60px; left:460px; width:140px;" data-id="narc">
-<input class="field" style="top:60px; left:620px; width:80px;" data-id="o2main">
+<!-- HEADER -->
+<input style="top:58px; left:90px; width:160px;" data-id="date">
+<input style="top:58px; left:285px; width:120px;" data-id="unit">
+<input style="top:58px; left:430px; width:140px;" data-id="narc">
+<input style="top:58px; left:600px; width:80px;" data-id="o2main">
 
-<input class="field" style="top:95px; left:120px; width:180px;" data-id="paramedic">
-<input class="field" style="top:95px; left:350px; width:180px;" data-id="emt">
+<input style="top:92px; left:110px; width:200px;" data-id="paramedic">
+<input style="top:92px; left:360px; width:200px;" data-id="emt">
 
-<!-- LEFT COLUMN -->
+<!-- LEFT COLUMN (MISC + SUCTION + O2 + BSI) -->
 <script>
-y = 160;
-for(let i=0;i<30;i++){
-    addField(2,y,40,40,`p2_l_qty_${i}`);
-    addField(2,y,85,40,`p2_l_act_${i}`);
-    y += 22;
+y=150;
+for(let i=0;i<42;i++){
+f(`p2_l_q_${i}`,y,38,36);
+f(`p2_l_a_${i}`,y,75,36);
+y+=20.6;
 }
 </script>
 
-<!-- CENTER COLUMN -->
+<!-- CENTER (IV + AIRWAY FULL LIST) -->
 <script>
-y = 160;
-for(let i=0;i<30;i++){
-    addField(2,y,350,40,`p2_c_qty_${i}`);
-    addField(2,y,395,40,`p2_c_act_${i}`);
-    y += 22;
+y=150;
+for(let i=0;i<42;i++){
+f(`p2_c_q_${i}`,y,350,36);
+f(`p2_c_a_${i}`,y,387,36);
+y+=20.6;
 }
 </script>
 
-<!-- RIGHT COLUMN -->
+<!-- RIGHT (MONITOR / O2 / IMMOBILIZATION / TRAUMA) -->
 <script>
-y = 160;
-for(let i=0;i<30;i++){
-    addField(2,y,650,40,`p2_r_qty_${i}`);
-    addField(2,y,695,40,`p2_r_act_${i}`);
-    y += 22;
+y=150;
+for(let i=0;i<42;i++){
+f(`p2_r_q_${i}`,y,650,36);
+f(`p2_r_a_${i}`,y,687,36);
+y+=20.6;
 }
 </script>
 
 </div>
 
-<!-- ================= SCRIPT ================= -->
+<!-- SCRIPT -->
 <script>
-// PAGE SWITCH
-function showPage(num){
-    document.querySelectorAll('.sheet').forEach(p => p.classList.remove('active'));
-    document.getElementById('page'+num).classList.add('active');
+function showPage(n){
+document.querySelectorAll('.sheet').forEach(p=>p.classList.remove('active'));
+document.getElementById('page'+n).classList.add('active');
 }
 
 // AUTOSAVE
-document.addEventListener("input", e => {
-    if(e.target.matches("input")){
-        localStorage.setItem(e.target.dataset.id, e.target.value);
-    }
+document.addEventListener("input", e=>{
+if(e.target.tagName==="INPUT"){
+localStorage.setItem(e.target.dataset.id, e.target.value);
+}
 });
 
-// LOAD DATA
-window.onload = () => {
-    document.querySelectorAll("input").forEach(input => {
-        let val = localStorage.getItem(input.dataset.id);
-        if(val) input.value = val;
-    });
+// LOAD
+window.onload=()=>{
+document.querySelectorAll("input").forEach(i=>{
+let v=localStorage.getItem(i.dataset.id);
+if(v) i.value=v;
+});
 };
 </script>
 
