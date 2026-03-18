@@ -5,91 +5,79 @@
 <title>ALS Unit Stock Sheet</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #121212;
-        color: #e0e0e0;
-    }
+@page { size: letter; margin: 0; }
 
-    header {
-        padding: 15px;
-        text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-        background: #1e1e1e;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+}
 
-    .controls {
-        padding: 10px;
-        text-align: center;
-        background: #1e1e1e;
-    }
+/* HEADER */
+.controls {
+    text-align: center;
+    padding: 10px;
+    background: #1e1e1e;
+}
 
-    button {
-        margin: 5px;
-        padding: 10px 15px;
-        background: #333;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
+button {
+    margin: 5px;
+    padding: 10px 15px;
+    background: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
-    button:hover {
-        background: #555;
-    }
+button:hover { background: #555; }
 
-    .page {
-        display: none;
-        padding: 15px;
-    }
+/* PAGE */
+.sheet {
+    position: relative;
+    width: 816px;
+    height: 1056px;
+    margin: auto;
+    display: none;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
 
-    .active {
-        display: block;
-    }
+.active { display: block; }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+/* INPUT FIELDS */
+.field {
+    position: absolute;
+}
 
-    th, td {
-        border: 1px solid #444;
-        padding: 6px;
-        font-size: 12px;
-    }
+input {
+    background: rgba(0,0,0,0.65);
+    border: 1px solid #444;
+    color: white;
+    font-size: 11px;
+    padding: 2px;
+}
 
-    th {
-        background: #222;
+/* PRINT MODE */
+@media print {
+    body { background: white; }
+    .controls { display: none; }
+
+    .sheet {
+        display: block !important;
+        page-break-after: always;
     }
 
     input {
-        width: 100%;
-        background: #1a1a1a;
-        color: #fff;
-        border: 1px solid #444;
-        padding: 4px;
+        background: transparent;
+        border: none;
+        color: black;
     }
-
-    .section {
-        background: #2a2a2a;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    @media print {
-        body { background: white; color: black; }
-        input { border: none; color: black; }
-        .controls { display: none; }
-        .page { display: block !important; }
-    }
+}
 </style>
 </head>
 
 <body>
-
-<header>ALS Unit Stock Sheet</header>
 
 <div class="controls">
     <button onclick="showPage(1)">Page 1</button>
@@ -97,145 +85,115 @@
     <button onclick="window.print()">Export PDF</button>
 </div>
 
-<!-- PAGE 1 -->
-<div id="page1" class="page active">
+<!-- ================= PAGE 1 ================= -->
+<div id="page1" class="sheet active" style="background-image:url('page1.jpg')">
 
-<h3>Medications & Supplies</h3>
-<table id="medTable"></table>
-
-<h3>IV Supplies</h3>
-<table id="ivTable"></table>
-
-<h3>Airway</h3>
-<table id="airwayTable"></table>
-
-<h3>Trauma / Bands</h3>
-<table id="traumaTable"></table>
-
-</div>
-
-<!-- PAGE 2 -->
-<div id="page2" class="page">
-
-<h3>Header Info</h3>
-<table>
-<tr>
-<td>Date <input data-id="date"></td>
-<td>Unit <input data-id="unit"></td>
-<td>Narc Lock # <input data-id="narc"></td>
-<td>Main O2 PSI <input data-id="o2main"></td>
-<td>Port O2 PSI <input data-id="o2port"></td>
-</tr>
-<tr>
-<td>Paramedic <input data-id="paramedic"></td>
-<td>EMT <input data-id="emt"></td>
-</tr>
-</table>
-
-<h3>Misc Equipment</h3>
-<table id="miscTable"></table>
-
-<h3>Airway Detailed</h3>
-<table id="airway2Table"></table>
-
-<h3>O2 Supplies</h3>
-<table id="o2Table"></table>
-
-<h3>Immobilization</h3>
-<table id="immobilizationTable"></table>
-
-<h3>Trauma Supplies</h3>
-<table id="trauma2Table"></table>
-
-</div>
-
+<!-- SAMPLE ROW ALIGNMENT (LEFT COLUMN MEDS) -->
 <script>
+function addField(page, top, left, width, id){
+    document.write(`<input class="field" style="top:${top}px;left:${left}px;width:${width}px" data-id="${id}">`);
+}
+</script>
+
+<!-- Generate rows dynamically -->
+<script>
+let y = 150;
+for(let i=0;i<35;i++){
+    addField(1,y,40,40,`p1_qty_${i}`);
+    addField(1,y,85,40,`p1_act_${i}`);
+    addField(1,y,300,120,`p1_exp_${i}`);
+    y += 22;
+}
+</script>
+
+<!-- IV POUCH (center column) -->
+<script>
+y = 150;
+for(let i=0;i<25;i++){
+    addField(1,y,420,40,`p1_iv_qty_${i}`);
+    addField(1,y,465,40,`p1_iv_act_${i}`);
+    y += 22;
+}
+</script>
+
+<!-- RIGHT COLUMN -->
+<script>
+y = 150;
+for(let i=0;i<25;i++){
+    addField(1,y,650,40,`p1_r_qty_${i}`);
+    addField(1,y,695,40,`p1_r_act_${i}`);
+    y += 22;
+}
+</script>
+
+</div>
+
+<!-- ================= PAGE 2 ================= -->
+<div id="page2" class="sheet" style="background-image:url('page2.jpg')">
+
+<!-- HEADER FIELDS -->
+<input class="field" style="top:60px; left:100px; width:150px;" data-id="date">
+<input class="field" style="top:60px; left:300px; width:120px;" data-id="unit">
+<input class="field" style="top:60px; left:460px; width:140px;" data-id="narc">
+<input class="field" style="top:60px; left:620px; width:80px;" data-id="o2main">
+
+<input class="field" style="top:95px; left:120px; width:180px;" data-id="paramedic">
+<input class="field" style="top:95px; left:350px; width:180px;" data-id="emt">
+
+<!-- LEFT COLUMN -->
+<script>
+y = 160;
+for(let i=0;i<30;i++){
+    addField(2,y,40,40,`p2_l_qty_${i}`);
+    addField(2,y,85,40,`p2_l_act_${i}`);
+    y += 22;
+}
+</script>
+
+<!-- CENTER COLUMN -->
+<script>
+y = 160;
+for(let i=0;i<30;i++){
+    addField(2,y,350,40,`p2_c_qty_${i}`);
+    addField(2,y,395,40,`p2_c_act_${i}`);
+    y += 22;
+}
+</script>
+
+<!-- RIGHT COLUMN -->
+<script>
+y = 160;
+for(let i=0;i<30;i++){
+    addField(2,y,650,40,`p2_r_qty_${i}`);
+    addField(2,y,695,40,`p2_r_act_${i}`);
+    y += 22;
+}
+</script>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+// PAGE SWITCH
 function showPage(num){
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sheet').forEach(p => p.classList.remove('active'));
     document.getElementById('page'+num).classList.add('active');
 }
 
-// -------- AUTO SAVE --------
+// AUTOSAVE
 document.addEventListener("input", e => {
     if(e.target.matches("input")){
-        localStorage.setItem(e.target.dataset.id || e.target.name, e.target.value);
+        localStorage.setItem(e.target.dataset.id, e.target.value);
     }
 });
 
+// LOAD DATA
 window.onload = () => {
     document.querySelectorAll("input").forEach(input => {
-        let val = localStorage.getItem(input.dataset.id || input.name);
+        let val = localStorage.getItem(input.dataset.id);
         if(val) input.value = val;
     });
 };
-
-// -------- TABLE BUILDER --------
-function buildTable(id, items){
-    const table = document.getElementById(id);
-    table.innerHTML = `
-        <tr>
-            <th>Qty</th>
-            <th>Act</th>
-            <th>Item</th>
-            <th>Exp / Notes</th>
-        </tr>
-    `;
-
-    items.forEach((item, i) => {
-        table.innerHTML += `
-        <tr>
-            <td><input data-id="${id}-qty-${i}"></td>
-            <td><input data-id="${id}-act-${i}"></td>
-            <td>${item}</td>
-            <td><input data-id="${id}-exp-${i}"></td>
-        </tr>`;
-    });
-}
-
-// -------- PAGE 1 DATA --------
-buildTable("medTable", [
-"18g Needles","20g Needles","21g Needles",
-"60mL Syringe","20mL Syringe","10mL Syringe","3mL Syringe","1mL Syringe",
-"Albuterol","Atrovent","Atropine","Epi 1:1","Epi 1:10",
-"Lidocaine","Dopamine","Narcan","Magnesium","Calcium","Sodium Bicarb",
-"D10","Lasix","Adenosine","Zofran","Labetalol","Amiodarone","TXA","Glucagon","Diltiazem"
-]);
-
-buildTable("ivTable", [
-"NS 1000mL","NS 500mL","10gtt set","Saline lock","Flush",
-"14G Cath","16G Cath","18G Cath","20G Cath","22G Cath","24G Cath"
-]);
-
-buildTable("airwayTable", [
-"Laryngoscope Handle","Mac 2","Mac 3","Mac 4","Miller 2","Miller 3","Miller 4",
-"Adult BVM","Pediatric BVM"
-]);
-
-buildTable("traumaTable", [
-"Trauma Dressing","ABD Pads","Vaseline Gauze","Kerlix","Tourniquet"
-]);
-
-// -------- PAGE 2 DATA --------
-buildTable("miscTable", [
-"Glucometer","Test Strips","Lancets","Manual BP Cuff","Stethoscope",
-"Gloves","Bio Bags","Flashlight"
-]);
-
-buildTable("airway2Table", [
-"ET Tubes 6.0–8.0","Bougie","OPA","NPA","Tube Holder"
-]);
-
-buildTable("o2Table", [
-"Nasal Cannula","Non-Rebreather","Pediatric Mask","Nebulizer"
-]);
-
-buildTable("immobilizationTable", [
-"KED","Traction Splint","Board Splints","C-Collars"
-]);
-
-buildTable("trauma2Table", [
-"Sterile Water","4x4","Tape","Cold Packs","Bandages"
-]);
 </script>
 
 </body>
