@@ -3,195 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <title>ALS Unit Stock Sheet</title>
+
 <style>
     body {
         font-family: Arial, sans-serif;
-        margin: 20px;
+        margin: 0;
+        background: #121212;
+        color: #e0e0e0;
     }
-    h1 {
+
+    header {
+        padding: 15px;
         text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        background: #1e1e1e;
     }
+
+    .controls {
+        padding: 10px;
+        text-align: center;
+        background: #1e1e1e;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px 15px;
+        background: #333;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #555;
+    }
+
+    .page {
+        display: none;
+        padding: 15px;
+    }
+
+    .active {
+        display: block;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 20px;
     }
+
     th, td {
-        border: 1px solid #000;
+        border: 1px solid #444;
         padding: 6px;
         font-size: 12px;
-        text-align: left;
     }
+
     th {
-        background: #eee;
+        background: #222;
     }
+
     input {
         width: 100%;
-        border: none;
-        outline: none;
-        font-size: 12px;
+        background: #1a1a1a;
+        color: #fff;
+        border: 1px solid #444;
+        padding: 4px;
     }
-    .section-title {
-        background: #ccc;
+
+    .section {
+        background: #2a2a2a;
         font-weight: bold;
         text-align: center;
     }
-    .btn {
-        padding: 10px 15px;
-        font-size: 14px;
-        cursor: pointer;
-        margin-bottom: 20px;
-    }
+
     @media print {
-        .btn {
-            display: none;
-        }
+        body { background: white; color: black; }
+        input { border: none; color: black; }
+        .controls { display: none; }
+        .page { display: block !important; }
     }
 </style>
 </head>
 
 <body>
 
-<h1>ALS Unit Stock Sheet</h1>
+<header>ALS Unit Stock Sheet</header>
 
-<button class="btn" onclick="window.print()">Export / Print as PDF</button>
+<div class="controls">
+    <button onclick="showPage(1)">Page 1</button>
+    <button onclick="showPage(2)">Page 2</button>
+    <button onclick="window.print()">Export PDF</button>
+</div>
 
-<!-- MEDICATIONS & SUPPLIES -->
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+
+<h3>Medications & Supplies</h3>
+<table id="medTable"></table>
+
+<h3>IV Supplies</h3>
+<table id="ivTable"></table>
+
+<h3>Airway</h3>
+<table id="airwayTable"></table>
+
+<h3>Trauma / Bands</h3>
+<table id="traumaTable"></table>
+
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+
+<h3>Header Info</h3>
 <table>
-    <tr>
-        <th>Qty</th>
-        <th>Act</th>
-        <th>Medications & Supplies</th>
-        <th>Expiration Date</th>
-    </tr>
-
-    <!-- Repeat rows as needed -->
-    <script>
-        const meds = [
-            "18g Needles","20g Needles","21g Needles",
-            "60mL Syringe","20mL Syringe","10mL Syringe","3mL Syringe","1mL Syringe",
-            "Albuterol","Atrovent","Atropine","Epi 1:1","Epi 1:10",
-            "Lidocaine","Lidocaine Drip","Dopamine Drip","Narcan",
-            "Magnesium","Calcium","Hydralazine","Sodium Bicarb","D10",
-            "Lasix","Adenosine","Zofran","Labetalol",
-            "Activated Charcoal","Thiamine","Nitro","Benadryl",
-            "Aspirin","Verapamil","Oral Glucose","Solu-Medrol",
-            "Bacteriostatic Water","Amiodarone","TXA","Glucagon","Diltiazem"
-        ];
-
-        document.write(meds.map(item => `
-            <tr>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td>${item}</td>
-                <td><input type="date"></td>
-            </tr>
-        `).join(""));
-    </script>
+<tr>
+<td>Date <input data-id="date"></td>
+<td>Unit <input data-id="unit"></td>
+<td>Narc Lock # <input data-id="narc"></td>
+<td>Main O2 PSI <input data-id="o2main"></td>
+<td>Port O2 PSI <input data-id="o2port"></td>
+</tr>
+<tr>
+<td>Paramedic <input data-id="paramedic"></td>
+<td>EMT <input data-id="emt"></td>
+</tr>
 </table>
 
-<!-- IV POUCH -->
-<table>
-    <tr><th colspan="4" class="section-title">IV Pouch</th></tr>
-    <tr>
-        <th>Qty</th>
-        <th>Act</th>
-        <th>Item</th>
-        <th>Notes</th>
-    </tr>
+<h3>Misc Equipment</h3>
+<table id="miscTable"></table>
 
-    <script>
-        const ivItems = [
-            "NS 1000mL","10gtt set","Saline lock","Saline flush",
-            "14G IV Cath","16G IV Cath","18G IV Cath","20G IV Cath",
-            "22G IV Cath","24G IV Cath","Alcohol prep","4x4 Gauze","Tape"
-        ];
+<h3>Airway Detailed</h3>
+<table id="airway2Table"></table>
 
-        document.write(ivItems.map(item => `
-            <tr>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td>${item}</td>
-                <td><input type="text"></td>
-            </tr>
-        `).join(""));
-    </script>
-</table>
+<h3>O2 Supplies</h3>
+<table id="o2Table"></table>
 
-<!-- AIRWAY / TOOLS -->
-<table>
-    <tr><th colspan="4" class="section-title">Airway / Tools</th></tr>
-    <tr>
-        <th>Qty</th>
-        <th>Act</th>
-        <th>Item</th>
-        <th>Notes</th>
-    </tr>
+<h3>Immobilization</h3>
+<table id="immobilizationTable"></table>
 
-    <script>
-        const airway = [
-            "Laryngoscope Handle","Mac 2 Blade","Mac 3 Blade","Mac 4 Blade",
-            "Miller 2 Blade","Miller 3 Blade","Miller 4 Blade",
-            "Adult BVM","Pediatric BVM","Magill Forceps (Adult)","Magill Forceps (Pediatric)"
-        ];
+<h3>Trauma Supplies</h3>
+<table id="trauma2Table"></table>
 
-        document.write(airway.map(item => `
-            <tr>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td>${item}</td>
-                <td><input type="text"></td>
-            </tr>
-        `).join(""));
-    </script>
-</table>
+</div>
 
-<!-- TRAUMA / BANDAGING -->
-<table>
-    <tr><th colspan="4" class="section-title">Bandaging / Misc</th></tr>
-    <tr>
-        <th>Qty</th>
-        <th>Act</th>
-        <th>Item</th>
-        <th>Notes</th>
-    </tr>
+<script>
+function showPage(num){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page'+num).classList.add('active');
+}
 
-    <script>
-        const misc = [
-            "Trauma Dressing","ABD Pads","Vaseline Gauze",
-            "Kerlix","Hemostats","CAT Tourniquet"
-        ];
+// -------- AUTO SAVE --------
+document.addEventListener("input", e => {
+    if(e.target.matches("input")){
+        localStorage.setItem(e.target.dataset.id || e.target.name, e.target.value);
+    }
+});
 
-        document.write(misc.map(item => `
-            <tr>
-                <td><input type="text"></td>
-                <td><input type="text"></td>
-                <td>${item}</td>
-                <td><input type="text"></td>
-            </tr>
-        `).join(""));
-    </script>
-</table>
+window.onload = () => {
+    document.querySelectorAll("input").forEach(input => {
+        let val = localStorage.getItem(input.dataset.id || input.name);
+        if(val) input.value = val;
+    });
+};
 
-<!-- CRITICAL BANDS -->
-<table>
-    <tr><th colspan="3" class="section-title">Critical Dx Bands</th></tr>
-    <tr>
-        <th>Qty</th>
-        <th>Act</th>
-        <th>Type</th>
-    </tr>
-    <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>Trauma Bands</td>
-    </tr>
-    <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>Stroke Bands</td>
-    </tr>
-</table>
+// -------- TABLE BUILDER --------
+function buildTable(id, items){
+    const table = document.getElementById(id);
+    table.innerHTML = `
+        <tr>
+            <th>Qty</th>
+            <th>Act</th>
+            <th>Item</th>
+            <th>Exp / Notes</th>
+        </tr>
+    `;
+
+    items.forEach((item, i) => {
+        table.innerHTML += `
+        <tr>
+            <td><input data-id="${id}-qty-${i}"></td>
+            <td><input data-id="${id}-act-${i}"></td>
+            <td>${item}</td>
+            <td><input data-id="${id}-exp-${i}"></td>
+        </tr>`;
+    });
+}
+
+// -------- PAGE 1 DATA --------
+buildTable("medTable", [
+"18g Needles","20g Needles","21g Needles",
+"60mL Syringe","20mL Syringe","10mL Syringe","3mL Syringe","1mL Syringe",
+"Albuterol","Atrovent","Atropine","Epi 1:1","Epi 1:10",
+"Lidocaine","Dopamine","Narcan","Magnesium","Calcium","Sodium Bicarb",
+"D10","Lasix","Adenosine","Zofran","Labetalol","Amiodarone","TXA","Glucagon","Diltiazem"
+]);
+
+buildTable("ivTable", [
+"NS 1000mL","NS 500mL","10gtt set","Saline lock","Flush",
+"14G Cath","16G Cath","18G Cath","20G Cath","22G Cath","24G Cath"
+]);
+
+buildTable("airwayTable", [
+"Laryngoscope Handle","Mac 2","Mac 3","Mac 4","Miller 2","Miller 3","Miller 4",
+"Adult BVM","Pediatric BVM"
+]);
+
+buildTable("traumaTable", [
+"Trauma Dressing","ABD Pads","Vaseline Gauze","Kerlix","Tourniquet"
+]);
+
+// -------- PAGE 2 DATA --------
+buildTable("miscTable", [
+"Glucometer","Test Strips","Lancets","Manual BP Cuff","Stethoscope",
+"Gloves","Bio Bags","Flashlight"
+]);
+
+buildTable("airway2Table", [
+"ET Tubes 6.0–8.0","Bougie","OPA","NPA","Tube Holder"
+]);
+
+buildTable("o2Table", [
+"Nasal Cannula","Non-Rebreather","Pediatric Mask","Nebulizer"
+]);
+
+buildTable("immobilizationTable", [
+"KED","Traction Splint","Board Splints","C-Collars"
+]);
+
+buildTable("trauma2Table", [
+"Sterile Water","4x4","Tape","Cold Packs","Bandages"
+]);
+</script>
 
 </body>
 </html>
