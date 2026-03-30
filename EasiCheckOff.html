@@ -1,224 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALS Unit Stock Sheet</title>
-
+<meta charset="UTF-8">
+<title>EMS Short Form</title>
 <style>
-body { font-family: Arial; margin:0; background:#f0f0f0; }
-.container { max-width:1100px; margin:auto; background:white; padding:15px; }
-h2 { text-align:center; }
-.nav { text-align:center; margin-bottom:10px; }
-button { padding:10px; margin:5px; }
-.section { margin-top:20px; }
-h3 { margin-bottom:5px; }
-table { width:100%; border-collapse:collapse; }
-td,th { border:1px solid #ccc; padding:5px; font-size:13px; }
-input { width:100%; box-sizing:border-box; }
-.hidden { display:none; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        font-size: 12px;
+    }
+    .section {
+        border: 1px solid #000;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    .row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+    .field {
+        flex: 1;
+    }
+    .label {
+        font-weight: bold;
+    }
+    .line {
+        border-bottom: 1px solid #000;
+        height: 18px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    }
+    table, th, td {
+        border: 1px solid black;
+    }
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>ALS Unit Stock Sheet</h2>
-
-<div class="nav">
-<button onclick="showPage(1)">Page 1</button>
-<button onclick="showPage(2)">Page 2</button>
-<button onclick="window.print()">Export PDF</button>
-</div>
-
-<!-- PAGE 1 -->
-<div id="page1">
+<h2>EMS SHORT FORM</h2>
 
 <div class="section">
-<table>
-<tr>
-<td>Date <input></td>
-<td>Unit <input></td>
-<td>Narc Lock # <input></td>
-<td>Main O2 PSI <input></td>
-<td>Spare O2 PSI <input></td>
-</tr>
-<tr>
-<td>Paramedic <input></td>
-<td>EMT <input></td>
-<td colspan="3"></td>
-</tr>
-</table>
+    <div class="row">
+        <div class="field">
+            <div class="label">First Name</div>
+            <div class="line"></div>
+        </div>
+        <div class="field">
+            <div class="label">Last Name</div>
+            <div class="line"></div>
+        </div>
+        <div class="field">
+            <div class="label">DOB</div>
+            <div class="line"></div>
+        </div>
+    </div>
 </div>
 
 <div class="section">
-<h3>Medications & Supplies</h3>
-<table>
-<tr><th>Item</th><th>Qty</th></tr>
-
-<tr><td>18g Needles</td><td><input></td></tr>
-<tr><td>20g Needles</td><td><input></td></tr>
-<tr><td>21g Needles</td><td><input></td></tr>
-<tr><td>5mL Syringe</td><td><input></td></tr>
-<tr><td>10mL Syringe</td><td><input></td></tr>
-<tr><td>20mL Syringe</td><td><input></td></tr>
-<tr><td>3mL Syringe</td><td><input></td></tr>
-<tr><td>1mL Syringe</td><td><input></td></tr>
-
-<tr><td>Albuterol</td><td><input></td></tr>
-<tr><td>Atrovent</td><td><input></td></tr>
-<tr><td>Atropine</td><td><input></td></tr>
-<tr><td>Epinephrine</td><td><input></td></tr>
-<tr><td>Epi 1:10,000</td><td><input></td></tr>
-<tr><td>Lidocaine</td><td><input></td></tr>
-<tr><td>Lidocaine Drip</td><td><input></td></tr>
-<tr><td>Dopamine Drip</td><td><input></td></tr>
-<tr><td>Narcan</td><td><input></td></tr>
-<tr><td>Magnesium</td><td><input></td></tr>
-<tr><td>Calcium</td><td><input></td></tr>
-<tr><td>Hydralazine</td><td><input></td></tr>
-<tr><td>Sodium Bicarb</td><td><input></td></tr>
-<tr><td>D10</td><td><input></td></tr>
-<tr><td>Lasix</td><td><input></td></tr>
-<tr><td>Adenosine</td><td><input></td></tr>
-<tr><td>Zofran</td><td><input></td></tr>
-<tr><td>Labetalol</td><td><input></td></tr>
-<tr><td>Activated Charcoal</td><td><input></td></tr>
-<tr><td>Thiamine</td><td><input></td></tr>
-<tr><td>Nitro</td><td><input></td></tr>
-<tr><td>Benadryl</td><td><input></td></tr>
-<tr><td>Aspirin Bottle</td><td><input></td></tr>
-
-<tr><td>Broselow Tape</td><td><input></td></tr>
-<tr><td>Verapamil</td><td><input></td></tr>
-<tr><td>Oral Glucose</td><td><input></td></tr>
-<tr><td>Solu-Medrol</td><td><input></td></tr>
-<tr><td>Bacteriostatic Water</td><td><input></td></tr>
-<tr><td>Amiodarone</td><td><input></td></tr>
-<tr><td>TXA</td><td><input></td></tr>
-<tr><td>Glucagon</td><td><input></td></tr>
-<tr><td>Diltiazem</td><td><input></td></tr>
-
-</table>
+    <div class="label">Chief Complaint</div>
+    <div class="line"></div>
+    <div class="line"></div>
 </div>
 
 <div class="section">
-<h3>IV Supplies / Pouches</h3>
-<table>
-<tr><td>NS 500mL</td><td><input></td></tr>
-<tr><td>NS 1000mL</td><td><input></td></tr>
-<tr><td>LR 1000mL</td><td><input></td></tr>
-<tr><td>Dial-a-flow</td><td><input></td></tr>
-<tr><td>Blood Tubing</td><td><input></td></tr>
-
-<tr><td>24g Cathlon</td><td><input></td></tr>
-<tr><td>22g Cathlon</td><td><input></td></tr>
-<tr><td>20g Cathlon</td><td><input></td></tr>
-<tr><td>18g Cathlon</td><td><input></td></tr>
-<tr><td>16g Cathlon</td><td><input></td></tr>
-<tr><td>14g Cathlon</td><td><input></td></tr>
-
-<tr><td>10g IV Set</td><td><input></td></tr>
-<tr><td>Humer Needle</td><td><input></td></tr>
-<tr><td>Clear Tape</td><td><input></td></tr>
-<tr><td>Saline Flushes</td><td><input></td></tr>
-<tr><td>Tourniquets</td><td><input></td></tr>
-</table>
-</div>
-
-</div>
-
-<!-- PAGE 2 -->
-<div id="page2" class="hidden">
-
-<div class="section">
-<h3>Miscellaneous Items</h3>
-<table>
-<tr><td>Glucometer</td><td><input></td></tr>
-<tr><td>Test Strips</td><td><input></td></tr>
-<tr><td>Lancets</td><td><input></td></tr>
-
-<tr><td>Manual Adult BP Cuff</td><td><input></td></tr>
-<tr><td>Manual Large Adult BP Cuff</td><td><input></td></tr>
-<tr><td>Manual Pediatric BP Cuff</td><td><input></td></tr>
-<tr><td>Manual Thigh BP Cuff</td><td><input></td></tr>
-
-<tr><td>Blankets/Towels</td><td><input></td></tr>
-<tr><td>Disinfectant Wipes</td><td><input></td></tr>
-<tr><td>Sharps Container</td><td><input></td></tr>
-<tr><td>Chest Seal</td><td><input></td></tr>
-<tr><td>Stair Chair</td><td><input></td></tr>
-<tr><td>Biohazard Bags</td><td><input></td></tr>
-<tr><td>Emesis Bags</td><td><input></td></tr>
-<tr><td>Trauma Shears</td><td><input></td></tr>
-<tr><td>Flashlight</td><td><input></td></tr>
-<tr><td>Reflective Vest</td><td><input></td></tr>
-</table>
+    <div class="label">Medical History</div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
 </div>
 
 <div class="section">
-<h3>Airway</h3>
-<table>
-<tr><td>OPA Assorted</td><td><input></td></tr>
-<tr><td>NPA Assorted</td><td><input></td></tr>
-<tr><td>King Airway</td><td><input></td></tr>
-<tr><td>ET Tubes (All Sizes)</td><td><input></td></tr>
-<tr><td>Laryngoscope Handle</td><td><input></td></tr>
-<tr><td>Mac Blades</td><td><input></td></tr>
-<tr><td>Miller Blades</td><td><input></td></tr>
-<tr><td>BVM Adult</td><td><input></td></tr>
-<tr><td>BVM Pediatric</td><td><input></td></tr>
-</table>
+    <div class="label">Allergies</div>
+    <div class="line"></div>
 </div>
 
 <div class="section">
-<h3>Oxygen Supplies</h3>
-<table>
-<tr><td>Nasal Cannula</td><td><input></td></tr>
-<tr><td>Non-Rebreather</td><td><input></td></tr>
-<tr><td>CPAP</td><td><input></td></tr>
-<tr><td>Nebulizer</td><td><input></td></tr>
-<tr><td>O2 Tubing</td><td><input></td></tr>
-</table>
+    <div class="label">Medications</div>
+    <div class="line"></div>
+    <div class="line"></div>
 </div>
 
 <div class="section">
-<h3>Trauma</h3>
-<table>
-<tr><td>Sterile Water</td><td><input></td></tr>
-<tr><td>Trauma Dressings</td><td><input></td></tr>
-<tr><td>ABD Pads</td><td><input></td></tr>
-<tr><td>4x4 Gauze</td><td><input></td></tr>
-<tr><td>Non-Sterile 4x4</td><td><input></td></tr>
-<tr><td>Kling</td><td><input></td></tr>
-<tr><td>Vaseline Gauze</td><td><input></td></tr>
-<tr><td>Silk Tape</td><td><input></td></tr>
-<tr><td>Betadine</td><td><input></td></tr>
-<tr><td>Cold Packs</td><td><input></td></tr>
-<tr><td>Bandages</td><td><input></td></tr>
-<tr><td>SAM Splints</td><td><input></td></tr>
-<tr><td>Triangular Bandages</td><td><input></td></tr>
-<tr><td>CAT Tourniquet</td><td><input></td></tr>
-</table>
+    <div class="label">Vitals</div>
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>BP</th>
+            <th>HR</th>
+            <th>RR</th>
+            <th>SpO2</th>
+            <th>Temp</th>
+            <th>EKG</th>
+            <th>BGL</th>
+        </tr>
+        <tr>
+            <td height="30"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td height="30"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
 </div>
 
+<div class="section">
+    <div class="label">Interventions</div>
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>Intervention</th>
+        </tr>
+        <tr>
+            <td height="30"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td height="30"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td height="30"></td>
+            <td></td>
+        </tr>
+    </table>
 </div>
-
-</div>
-
-<script>
-function showPage(p){
-document.getElementById("page1").classList.add("hidden");
-document.getElementById("page2").classList.add("hidden");
-document.getElementById("page"+p).classList.remove("hidden");
-}
-
-// autosave
-document.querySelectorAll("input").forEach((el,i)=>{
-let key="f"+i;
-el.value=localStorage.getItem(key)||"";
-el.oninput=()=>localStorage.setItem(key,el.value);
-});
-</script>
 
 </body>
 </html>
